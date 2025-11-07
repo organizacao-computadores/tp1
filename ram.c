@@ -36,10 +36,11 @@ RAM* criarRAM_aleatoria(int tamanho) {
 	return ram;
 }
 
-void liberarRAM(int tamanho, RAM *ram) {
+RAM* liberarRAM(int tamanho, RAM *ram) {
 	free(ram->memoria);
 	ram->memoria = NULL;
 	ram->tamanho = 0;
+	return NULL;
 }
 
 void setDado(int endereco, int conteudo, RAM *ram) {
