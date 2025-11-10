@@ -34,23 +34,22 @@ void programas(){
 	cpu = criarCPU();
 	//ram = criarRAM_vazia(1);
 
-	printf("\nInsira a e b para multiplicação: \n");
+	//multiplicação
+	printf("\nInsira dois valores para multiplicação: \n");
 	scanf("%d%d", &a, &b);
+	printf("\n%d x %d = %d\n", a, b, programaMulti(cpu, a, b));
 
-	printf("\nAxB = %d\n", programaMulti(cpu, a, b));
-
-	printf("\nInsira a e b para divisão: \n");
+	//divisão
+	printf("\nInsira dois valores para divisão: \n");
 	scanf("%d%d", &a, &b);
+	printf("\n%d / %d = %d\n", a, b, programaDiv(cpu, a, b));
 
-	printf("\nA/B = %d\n", programaDiv(cpu, a, b));
-
-	printf("\nInsira a para cálculo da raiz: \n");
+	//raiz quadrada
+	printf("\nInsira um valor para calcular sua raiz quadrada aproximada: \n");
 	scanf("%d", &a);
-
-	printf("\nRaiz de a = %d\n", programaRaizAproximada(cpu, a));
+	printf("\nRaiz quadrada de %d = %d\n", a, programaRaizAproximada(cpu, a));
 
 	int n1, m1, n2, m2;
-
 	printf("\nInsira n e m para criar uma matriz: \n");
 	scanf("%d%d", &n1, &m1);
 
@@ -78,6 +77,10 @@ void programas(){
 	ramMatriz1 = liberarRAM(n1 * m1, ramMatriz1);
 	ramMatriz2 = liberarRAM(n2 * m2, ramMatriz2);
 
+	//fatorial
+	printf("\nDigite um valor para calcular seu fatorial: ");
+	scanf("%d", &a);
+	printf("\nFatorial de %d = %d\n", a, programaFatorial(cpu, a));
 
 	free(cpu);
 }

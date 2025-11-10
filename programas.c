@@ -114,11 +114,12 @@ int programaRaizAproximada(CPU *cpu, int valor) {
 
   //cria um vetor de instruções
   Instruction **trecho = (Instruction **) malloc(3 * sizeof(Instruction *));
-  int aux = 0;
   
-  // multiplica i^2 até o resultado ser maior que o valor digitadp, e retorna i-1
-  int i;
-  for (i=1; aux<valor; i++) {
+  // multiplica i^2 até o resultado ser maior ou igual que o valor digitado
+  int aux = 0;
+  int i = 1;
+
+  while (aux <= valor) {
     aux = programaMulti(cpu, i, i);
     
     trecho[0] = setInstruction(1, aux, -1, 4); // envia aux para o registrador 1
@@ -128,13 +129,15 @@ int programaRaizAproximada(CPU *cpu, int valor) {
     setPrograma(cpu, trecho, 3); // envia as instruções para a cpu
     iniciar(cpu, ram); // executa as instruções na cpu
     destroiPrograma(cpu, 3); // free no programa criado
-  }
 
+    i++;
+  }
+ 
   // libera memória alocada
   trecho = destroiTrecho(trecho, 3);
   liberarRAM(2, ram);
 
-  return i-1;
+  return i-2;
 }
 
 int encontrarPosicaoMatriz(int posInicial, int nLinhas, int mColunas, int i, int j){
@@ -208,4 +211,31 @@ RAM *programaMultiplicaMatriz(CPU *cpu, RAM *matriz1, int n1, int m1, RAM *matri
 
   return resultado;
 
+}
+
+int programaFatorial(CPU *cpu, int valor) {
+  RAM *ram = criarRAM_vazia(2);
+
+  //cria um vetor de instruções
+  Instruction **trecho = (Instruction **) malloc(3 * sizeof(Instruction *));
+
+  //multiplica todos os valores de 'valor' até '2'
+  int aux = valor;
+  for (int i = valor-1; i > 1; i--) {
+    aux = programaMulti(cpu, aux, i);
+
+    trecho[0] = setInstruction(1, aux, -1, 4); // envia res para o registrador 1
+    trecho[1] = setInstruction(1, 0, -1, 5); // passa valor do registrador 1 (aux) para a ram[0]
+    trecho[2] = setInstruction(-1, -1, -1, -1); // haut
+
+    setPrograma(cpu, trecho, 3); // envia as instruções para a cpu
+    iniciar(cpu, ram); // executa as instruções na cpu
+    destroiPrograma(cpu, 3); // free no programa criado    
+  }
+
+  // free nas memórias alocadas
+  liberarRAM(2, ram);
+  destroiTrecho(trecho, 3);
+
+  return aux;
 }
