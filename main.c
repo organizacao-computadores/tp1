@@ -49,6 +49,15 @@ void programas(){
 
 	printf("\nRaiz de a = %d\n", programaRaizAproximada(cpu, a));
 
+	printf("\nInsira m e n para criar uma matriz: \n");
+	scanf("%d%d", &a, &b);
+
+	RAM *ram;
+	ram = programaPreencheMatriz(cpu, ram, a, b);
+
+	printf("\nResultado da matriz preenchida:\n");
+	imprimir(ram);
+	ram = liberarRAM(a * b, ram);
 
 
 	free(cpu);

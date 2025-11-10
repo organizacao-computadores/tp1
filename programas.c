@@ -3,6 +3,9 @@
 
 #include "programas.h"
 
+int econtrarPosicaoMatriz(int posInicial, int nLinhas, int mColunas, int i, int j);
+RAM *criaMatriz(int n, int m, RAM *ram);
+
 int programaMulti(CPU *cpu, int a, int b){
   int result;
   RAM *ram = criarRAM_vazia(2);
@@ -134,8 +137,42 @@ int programaRaizAproximada(CPU *cpu, int valor) {
   return i-1;
 }
 
-int econtrarPosicaoMatriz(RAM *ram, int posInicial, int nLinhas, int mColunas, int i, int j){
+int econtrarPosicaoMatriz(int posInicial, int nLinhas, int mColunas, int i, int j){
   int endereco;
   endereco = (posInicial + i * mColunas + j);
   return endereco;
+}
+
+RAM *criaMatriz(int n, int m, RAM *ram){
+  ram = criarRAM_vazia(n * m);
+  return ram;
+}
+
+RAM *programaPreencheMatriz(CPU *cpu, RAM *ram, int n, int m){
+  int temp, endereco;
+  ram = criaMatriz(n, m, ram);
+
+  Instruction **trecho = (Instruction **) malloc(3 * sizeof(Instruction*));
+
+  for(int i = 0; i < n; i++){
+    for(int j = 0; j < m; j++){
+      endereco = econtrarPosicaoMatriz(0, n, m, i, j);
+      printf("\nInsira o valor da matriz[%d][%d]: ", i, j);
+      scanf("%d", &temp);
+
+      trecho[0] = setInstruction(1, temp, -1, 4);
+      trecho[1] = setInstruction(1, endereco, -1, 5);
+      trecho[2] = setInstruction(-1, -1, -1, -1);
+
+      setPrograma(cpu, trecho, 3);
+      iniciar(cpu, ram);
+      destroiPrograma(cpu, 3);
+    }
+  }
+  
+  imprimir(ram);
+
+  trecho = destroiTrecho(trecho, 3);
+
+  return ram;
 }

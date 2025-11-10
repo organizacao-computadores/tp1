@@ -8,6 +8,7 @@
 int programaMulti(CPU *cpu, int a, int b);
 int programaDiv(CPU *cpu, int dividendo, int divisor);
 int programaRaizAproximada(CPU *cpu, int valor);
+RAM *programaPreencheMatriz(CPU *cpu, RAM *ram, int n, int m);
 
 
 #endif
