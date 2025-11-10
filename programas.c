@@ -253,3 +253,47 @@ int programaFatorial(CPU *cpu, int valor) {
 
   return aux;
 }
+
+void programaBhaskara(CPU *cpu, int a, int b, int c, int *res) {
+  // criação de RAM temporária
+  RAM *ram = criarRAM_vazia(2);
+
+  // cria vetor de instruções
+  Instruction **trecho = (Instruction **) malloc(3 * sizeof(Instruction *));
+
+  
+  // calculo de delta
+  int delta = programaMulti(cpu, b, b) - programaMulti(cpu, 4, programaMulti(cpu, a, c));
+  
+  // calculo de x1
+  int x1 = programaDiv(cpu, (-b + programaRaizAproximada(cpu, delta) ), programaMulti(cpu, 2, a)); 
+  
+  trecho[0] = setInstruction(1, x1, -1, 4); // envia res para o registrador 1
+  trecho[1] = setInstruction(1, 0, -1, 5); // passa valor do registrador 1 (x1) para a ram[0]
+  trecho[2] = setInstruction(-1, -1, -1, -1); // haut
+
+  setPrograma(cpu, trecho, 3); // envia as instruções para a cpu
+  iniciar(cpu, ram); // executa as instruções na cpu
+  destroiPrograma(cpu, 3); // free no programa criado   
+
+  // calculo de x2
+  int x2 = programaDiv(cpu, (-b - programaRaizAproximada(cpu, delta) ), programaMulti(cpu, 2, a)); 
+  
+  trecho[0] = setInstruction(1, x2, -1, 4); // envia res para o registrador 1
+  trecho[1] = setInstruction(1, 1, -1, 5); // passa valor do registrador 2 (x2) para a ram[1]
+  trecho[2] = setInstruction(-1, -1, -1, -1); // haut
+
+  setPrograma(cpu, trecho, 3); // envia as instruções para a cpu
+  iniciar(cpu, ram); // executa as instruções na cpu
+  destroiPrograma(cpu, 3); // free no programa criado   
+
+  // liberando memorias alocadas
+  trecho = destroiTrecho(trecho, 3);
+  liberarRAM(ram);
+
+  // atualizando vetor de resultados
+  res[0] = x1;
+  res[1] = x2;
+
+  return;
+}
