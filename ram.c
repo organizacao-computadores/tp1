@@ -52,9 +52,31 @@ int getDado(int endereco, RAM *ram) {
 	return ram->memoria[endereco];	
 }
 
+int getTamanho(RAM *ram){
+	return ram->tamanho;
+}
+
 void imprimir(RAM *ram) {
 	printf("Conteúdo da RAM: \n");
 	for (int i = 0; i < ram->tamanho; i++)
 		printf("%d, ", ram->memoria[i]);
 	printf("\n");
+}
+
+RAM *aumentarRam(RAM *ram, int novoTamanho){
+	int *tempMemoria = (int*) realloc(ram->memoria, novoTamanho * sizeof(int));
+
+	if(tempMemoria == NULL){
+		printf("\nErro ao realocar ram\n");
+	}
+	else{ 
+		ram->memoria = tempMemoria;
+		for(int i = ram->tamanho; i < novoTamanho; i++){
+			ram->memoria[i] = 0;
+		}
+		printf("\nTamanho inicial da RAM: %d | novo tamanho: %d\n", ram->tamanho, novoTamanho);
+		ram->tamanho = novoTamanho;
+	}
+
+	return ram;
 }

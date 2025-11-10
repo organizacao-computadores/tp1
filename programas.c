@@ -3,8 +3,8 @@
 
 #include "programas.h"
 
-int encontrarPosicaoMatriz(int posInicial, int nLinhas, int mColunas, int i, int j);
-RAM *criaMatriz(int n, int m, RAM *ram);
+int encontrarPosicaoMatriz(CPU *cpu, int posInicial, int nLinhas, int mColunas, int i, int j);
+
 
 int programaMulti(CPU *cpu, int a, int b){
   int result;
@@ -140,9 +140,9 @@ int programaRaizAproximada(CPU *cpu, int valor) {
   return i-2;
 }
 
-int encontrarPosicaoMatriz(int posInicial, int nLinhas, int mColunas, int i, int j){
+int encontrarPosicaoMatriz(CPU *cpu, int posInicial, int nLinhas, int mColunas, int i, int j){
   int endereco;
-  endereco = (posInicial + i * mColunas + j);
+  endereco = (posInicial + programaMulti(cpu, i, mColunas) + j);
   return endereco;
 }
 
@@ -151,15 +151,14 @@ RAM *criaMatriz(int n, int m, RAM *ram){
   return ram;
 }
 
-RAM *programaPreencheMatriz(CPU *cpu, RAM *ram, int n, int m){
+RAM *programaPreencheMatriz(CPU *cpu, RAM *ram, int pontoDePartida,int n, int m){
   int temp, endereco;
-  ram = criaMatriz(n, m, ram);
 
   Instruction **trecho = (Instruction **) malloc(3 * sizeof(Instruction*));
 
   for(int i = 0; i < n; i++){
     for(int j = 0; j < m; j++){
-      endereco = encontrarPosicaoMatriz(0, n, m, i, j);
+      endereco = encontrarPosicaoMatriz(cpu, pontoDePartida, n, m, i, j);
       printf("\nInsira o valor da matriz[%d][%d]: ", i, j);
       scanf("%d", &temp);
 
@@ -180,27 +179,35 @@ RAM *programaPreencheMatriz(CPU *cpu, RAM *ram, int n, int m){
   return ram;
 }
 
-RAM *programaMultiplicaMatriz(CPU *cpu, RAM *matriz1, int n1, int m1, RAM *matriz2, int n2, int m2){
-  int addResult, addM1, addM2, tempMult;
-  RAM *resultado;
-  resultado = criaMatriz(n1, m2, resultado);
+RAM *programaMultiplicaMatriz(CPU *cpu, RAM *ram, int n1, int m1, int n2, int m2){
+  int addResult, addM1, addM2, tempMult, tamanhoM1, tamanhoM2;
+
+  if (m2 != n1) {
+    printf("Erro: número de colunas de A deve ser igual ao número de linhas de B.\n");
+    return ram;
+  }
+
+  tamanhoM1 = programaMulti(cpu, n1, m1);
+  tamanhoM2 = programaMulti(cpu, n2, m2);
+
+  ram = aumentarRam(ram, getTamanho(ram) + programaMulti(cpu, n1, m2));
 
   RAM *tempSoma = criarRAM_vazia(2);
   Instruction **trecho = (Instruction **) malloc(6 * sizeof(Instruction *));
 
   for(int i = 0; i < n1; i++){
     for(int j = 0; j < m2; j++){
-      addResult = encontrarPosicaoMatriz(0, n1, m2, i, j);
+      addResult = encontrarPosicaoMatriz(cpu, (tamanhoM1 + tamanhoM2), n1, m2, i, j);
       for(int k = 0; k < m1; k++){
 
-        addM1 = encontrarPosicaoMatriz(0, n1, m1, i, k);
-        addM2 = encontrarPosicaoMatriz(0, n2, m2, k, j);
+        addM1 = encontrarPosicaoMatriz(cpu, 0, n1, m1, i, k);
+        addM2 = encontrarPosicaoMatriz(cpu, tamanhoM1, n2, m2, k, j);
 
-        tempMult = programaMulti(cpu, getDado(addM1, matriz1), getDado(addM2, matriz2));
+        tempMult = programaMulti(cpu, getDado(addM1, ram), getDado(addM2, ram));
 
         trecho[0] = setInstruction(1, tempMult, -1, 4);
         trecho[1] = setInstruction(1, 0, -1, 5);
-        trecho[2] = setInstruction(2, getDado(addResult, resultado), -1, 4);
+        trecho[2] = setInstruction(2, getDado(addResult, ram), -1, 4);
         trecho[3] = setInstruction(2, 1, -1, 5);
         trecho[4] = setInstruction(0, 1, 0, 0);
         trecho[5] = setInstruction(-1, -1, -1, -1);
@@ -209,16 +216,15 @@ RAM *programaMultiplicaMatriz(CPU *cpu, RAM *matriz1, int n1, int m1, RAM *matri
         iniciar(cpu, tempSoma);
         destroiPrograma(cpu, 6);
 
-        setDado(addResult, getDado(0, tempSoma), resultado);
+        setDado(addResult, getDado(0, tempSoma), ram);
 
       }
     }
   }
 
-  trecho = destroiTrecho(trecho, 2);
+  trecho = destroiTrecho(trecho, 6);
   tempSoma = liberarRAM(tempSoma);
-  return resultado;
-
+  return ram;
 }
 
 int programaFatorial(CPU *cpu, int valor) {

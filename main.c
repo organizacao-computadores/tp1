@@ -54,29 +54,31 @@ void programas(){
 	printf("\nInsira n e m para criar uma matriz: \n");
 	scanf("%d%d", &n1, &m1);
 
-	RAM *ramMatriz1;
-	ramMatriz1 = programaPreencheMatriz(cpu, ramMatriz1, n1, m1);
+	RAM *ram = NULL;
+	ram = criaMatriz(n1, m1, ram);
+	ram = programaPreencheMatriz(cpu, ram, 0, n1, m1);
+	int tamM1 = getTamanho(ram);
 
 	printf("\nResultado da matriz preenchida:\n");
-	imprimir(ramMatriz1);
+	imprimir(ram);
 
 	printf("\nInsira n e m para criar outra matriz: \n");
 	scanf("%d%d", &n2, &m2);
 
-	RAM *ramMatriz2;
-	ramMatriz2 = programaPreencheMatriz(cpu, ramMatriz2, n2, m2);
+	int tamM2 = programaMulti(cpu, n2, m2);
+
+	ram = aumentarRam(ram, tamM1 + tamM2);
+	ram = programaPreencheMatriz(cpu, ram, tamM1, n2, m2);
 
 	printf("\nResultado da matriz preenchida:\n");
-	imprimir(ramMatriz2);
+	imprimir(ram);
 
-	RAM *resultadoMultMatrizes;
-	resultadoMultMatrizes = programaMultiplicaMatriz(cpu, ramMatriz1, n1, m2, ramMatriz2, n2, m2);
+	ram = programaMultiplicaMatriz(cpu, ram, n1, m1, n2, m2);
 
 	printf("\nMatriz1 X Matriz2:\n");
-	imprimir(resultadoMultMatrizes);
+	imprimir(ram);
 
-	ramMatriz1 = liberarRAM(ramMatriz1);
-	ramMatriz2 = liberarRAM(ramMatriz2);
+	ram = liberarRAM(ram);
 
 	//fatorial
 	printf("\nDigite um valor para calcular seu fatorial: ");
@@ -86,7 +88,7 @@ void programas(){
 	//formula de bhaskara
 	printf("\nDigite a, b e c para calcular a fórmula de bháskara: ");
 	scanf("%d%d%d", &a, &b, &c);
-	programaBhaskara(cpu, a, b, c, res);
+	//programaBhaskara(cpu, a, b, c, res);
 	printf("\nX1 = %d\nX2 = %d\n", res[0], res[1]);
 
 	free(cpu);
