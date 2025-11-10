@@ -3,7 +3,7 @@
 
 #include "programas.h"
 
-int econtrarPosicaoMatriz(int posInicial, int nLinhas, int mColunas, int i, int j);
+int encontrarPosicaoMatriz(int posInicial, int nLinhas, int mColunas, int i, int j);
 RAM *criaMatriz(int n, int m, RAM *ram);
 
 int programaMulti(CPU *cpu, int a, int b){
@@ -137,7 +137,7 @@ int programaRaizAproximada(CPU *cpu, int valor) {
   return i-1;
 }
 
-int econtrarPosicaoMatriz(int posInicial, int nLinhas, int mColunas, int i, int j){
+int encontrarPosicaoMatriz(int posInicial, int nLinhas, int mColunas, int i, int j){
   int endereco;
   endereco = (posInicial + i * mColunas + j);
   return endereco;
@@ -156,7 +156,7 @@ RAM *programaPreencheMatriz(CPU *cpu, RAM *ram, int n, int m){
 
   for(int i = 0; i < n; i++){
     for(int j = 0; j < m; j++){
-      endereco = econtrarPosicaoMatriz(0, n, m, i, j);
+      endereco = encontrarPosicaoMatriz(0, n, m, i, j);
       printf("\nInsira o valor da matriz[%d][%d]: ", i, j);
       scanf("%d", &temp);
 
@@ -169,10 +169,43 @@ RAM *programaPreencheMatriz(CPU *cpu, RAM *ram, int n, int m){
       destroiPrograma(cpu, 3);
     }
   }
-  
+
   imprimir(ram);
 
   trecho = destroiTrecho(trecho, 3);
 
   return ram;
+}
+
+RAM *programaMultiplicaMatriz(CPU *cpu, RAM *matriz1, int n1, int m1, RAM *matriz2, int n2, int m2){
+  int addResult, addM1, addM2, tempMult;
+  RAM *resultado;
+  resultado = criarRAM_vazia(m1 * n2);
+
+  Instruction **trecho = (Instruction **) malloc(2 * sizeof(Instruction *));
+
+  for(int i = 0; i < n1; i++){
+    for(int j = 0; j < m2; j++){
+      addResult = encontrarPosicaoMatriz(0, m1, n2, i, j);
+      for(int k = 0; k < m1; k++){
+
+          addM1 = encontrarPosicaoMatriz(0, n1, m1, i, k);
+          addM2 = encontrarPosicaoMatriz(0, n2, m2, k, j);
+
+          tempMult = programaMulti(cpu, getDado(addM1, matriz1), getDado(addM2, matriz2));
+
+          trecho[0] = setInstruction(tempMult, getDado(addResult, resultado), addResult, 0);
+          trecho[1] = setInstruction(-1, -1, -1, -1);
+
+          setPrograma(cpu, trecho, 2);
+          iniciar(cpu, resultado);
+          destroiPrograma(cpu, 2);
+      }
+    }
+  }
+
+  trecho = destroiTrecho(trecho, 2);
+
+  return resultado;
+
 }

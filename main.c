@@ -49,15 +49,34 @@ void programas(){
 
 	printf("\nRaiz de a = %d\n", programaRaizAproximada(cpu, a));
 
-	printf("\nInsira m e n para criar uma matriz: \n");
-	scanf("%d%d", &a, &b);
+	int n1, m1, n2, m2;
 
-	RAM *ram;
-	ram = programaPreencheMatriz(cpu, ram, a, b);
+	printf("\nInsira n e m para criar uma matriz: \n");
+	scanf("%d%d", &n1, &m1);
+
+	RAM *ramMatriz1;
+	ramMatriz1 = programaPreencheMatriz(cpu, ramMatriz1, n1, m1);
 
 	printf("\nResultado da matriz preenchida:\n");
-	imprimir(ram);
-	ram = liberarRAM(a * b, ram);
+	imprimir(ramMatriz1);
+
+	printf("\nInsira n e m para criar outra matriz: \n");
+	scanf("%d%d", &n2, &m2);
+
+	RAM *ramMatriz2;
+	ramMatriz2 = programaPreencheMatriz(cpu, ramMatriz2, n2, m2);
+
+	printf("\nResultado da matriz preenchida:\n");
+	imprimir(ramMatriz2);
+
+	RAM *resultadoMultMatrizes;
+	resultadoMultMatrizes = programaMultiplicaMatriz(cpu, ramMatriz1, n1, m2, ramMatriz2, n2, m2);
+
+	printf("\nMatriz1 X Matriz2:\n");
+	imprimir(resultadoMultMatrizes);
+
+	ramMatriz1 = liberarRAM(n1 * m1, ramMatriz1);
+	ramMatriz2 = liberarRAM(n2 * m2, ramMatriz2);
 
 
 	free(cpu);
