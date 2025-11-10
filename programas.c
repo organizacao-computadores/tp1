@@ -3,9 +3,9 @@
 
 #include "programas.h"
 
-int programaMulti(RAM *ram, CPU *cpu, int a, int b){
+int programaMulti(CPU *cpu, int a, int b){
   int result;
-  ram = criarRAM_vazia(3);
+  RAM *ram = criarRAM_vazia(3);
   Instruction **trecho1;
   trecho1 = (Instruction**) malloc(3 * sizeof(Instruction*));
 
@@ -57,8 +57,8 @@ int programaMulti(RAM *ram, CPU *cpu, int a, int b){
   return result;
 }
 
-int programaDiv(RAM *ram, CPU *cpu, int dividendo, int divisor){
-  ram = criarRAM_vazia(5);
+int programaDiv(CPU *cpu, int dividendo, int divisor){
+  RAM *ram = criarRAM_vazia(5);
 
   Instruction **trecho1 = (Instruction **) malloc(5 * sizeof(Instruction*));
   trecho1[0] = setInstruction(1, dividendo, -1, 4); //reg1 <- dividendo
@@ -87,7 +87,7 @@ int programaDiv(RAM *ram, CPU *cpu, int dividendo, int divisor){
 
   Instruction **trecho3 = (Instruction **) malloc(5 * sizeof(Instruction*));
 
-  while(dividendo > divisor){
+  while(dividendo >= divisor){
 
     trecho3[0] = setInstruction(0, 1, 0, 1); //reg1 <- ram[0]; reg2 <- ram[1]; reg1 -= reg2; ram[0] <- reg1;
     trecho3[1] = setInstruction(2, 3, 3, 0); //reg1 <- ram[2]; reg2 <- ram[3]; reg1 += reg2; ram[3] <- reg1;

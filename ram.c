@@ -40,6 +40,7 @@ RAM* liberarRAM(int tamanho, RAM *ram) {
 	free(ram->memoria);
 	ram->memoria = NULL;
 	ram->tamanho = 0;
+	free(ram);
 	return NULL;
 }
 

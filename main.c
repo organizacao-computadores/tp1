@@ -20,31 +20,31 @@ int main() {
 	printf("\nRam aleatoria gerada: \n");
 	imprimir(ram);
 
+	liberarRAM(n, ram);
+
 	programas();
 
 }
 
 void programas(){
-	RAM *ram;
+	//RAM *ram;
 	CPU *cpu;
 	int a, b;
 
 	cpu = criarCPU();
-	ram = criarRAM(1);
+	//ram = criarRAM_vazia(1);
 
 	printf("\nInsira a e b: \n");
 	scanf("%d%d", &a, &b);
 
 
 
-	printf("\nAxB = %d\n", programaMulti(ram, cpu, a, b));
+	printf("\nAxB = %d\n", programaMulti(cpu, a, b));
 
 	printf("\nInsira a e b: \n");
 	scanf("%d%d", &a, &b);
 
-	printf("\nA/B = %d\n", programaDiv(ram, cpu, a, b));
+	printf("\nA/B = %d\n", programaDiv(cpu, a, b));
 
-	if(ram != NULL)
-		free(ram);
 	free(cpu);
 }
