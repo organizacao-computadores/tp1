@@ -216,7 +216,7 @@ RAM *programaMultiplicaMatriz(CPU *cpu, RAM *matriz1, int n1, int m1, RAM *matri
   }
 
   trecho = destroiTrecho(trecho, 2);
-
+  tempSoma = liberarRAM(tempSoma);
   return resultado;
 
 }
