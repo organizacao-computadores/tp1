@@ -77,6 +77,7 @@ void programas(){
 
 	ramMatriz1 = liberarRAM(n1 * m1, ramMatriz1);
 	ramMatriz2 = liberarRAM(n2 * m2, ramMatriz2);
+	resultadoMultMatrizes = liberarRAM(m1 * n2, resultadoMultMatrizes);
 
 
 	free(cpu);

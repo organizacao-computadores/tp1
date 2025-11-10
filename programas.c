@@ -180,26 +180,34 @@ RAM *programaPreencheMatriz(CPU *cpu, RAM *ram, int n, int m){
 RAM *programaMultiplicaMatriz(CPU *cpu, RAM *matriz1, int n1, int m1, RAM *matriz2, int n2, int m2){
   int addResult, addM1, addM2, tempMult;
   RAM *resultado;
-  resultado = criarRAM_vazia(m1 * n2);
+  resultado = criaMatriz(n1, m2, resultado);
 
-  Instruction **trecho = (Instruction **) malloc(2 * sizeof(Instruction *));
+  RAM *tempSoma = criarRAM_vazia(2);
+  Instruction **trecho = (Instruction **) malloc(6 * sizeof(Instruction *));
 
   for(int i = 0; i < n1; i++){
     for(int j = 0; j < m2; j++){
-      addResult = encontrarPosicaoMatriz(0, m1, n2, i, j);
+      addResult = encontrarPosicaoMatriz(0, n1, m2, i, j);
       for(int k = 0; k < m1; k++){
 
-          addM1 = encontrarPosicaoMatriz(0, n1, m1, i, k);
-          addM2 = encontrarPosicaoMatriz(0, n2, m2, k, j);
+        addM1 = encontrarPosicaoMatriz(0, n1, m1, i, k);
+        addM2 = encontrarPosicaoMatriz(0, n2, m2, k, j);
 
-          tempMult = programaMulti(cpu, getDado(addM1, matriz1), getDado(addM2, matriz2));
+        tempMult = programaMulti(cpu, getDado(addM1, matriz1), getDado(addM2, matriz2));
 
-          trecho[0] = setInstruction(tempMult, getDado(addResult, resultado), addResult, 0);
-          trecho[1] = setInstruction(-1, -1, -1, -1);
+        trecho[0] = setInstruction(1, tempMult, -1, 4);
+        trecho[1] = setInstruction(1, 0, -1, 5);
+        trecho[2] = setInstruction(2, getDado(addResult, resultado), -1, 4);
+        trecho[3] = setInstruction(2, 1, -1, 5);
+        trecho[4] = setInstruction(0, 1, 0, 0);
+        trecho[5] = setInstruction(-1, -1, -1, -1);
 
-          setPrograma(cpu, trecho, 2);
-          iniciar(cpu, resultado);
-          destroiPrograma(cpu, 2);
+        setPrograma(cpu, trecho, 6);
+        iniciar(cpu, tempSoma);
+        destroiPrograma(cpu, 6);
+
+        setDado(addResult, getDado(0, tempSoma), resultado);
+
       }
     }
   }
