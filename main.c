@@ -88,8 +88,14 @@ void programas(){
 	//formula de bhaskara
 	printf("\nDigite a, b e c para calcular a fórmula de bháskara: ");
 	scanf("%d%d%d", &a, &b, &c);
-	programaBhaskara(cpu, a, b, c, res);
-	printf("\nX1 = %d\nX2 = %d\n", res[0], res[1]);
+	int aux = programaBhaskara(cpu, a, b, c, res);
+	
+	if (aux) {
+		printf("\nX1 = %d\nX2 = %d\n", res[0], res[1]);
+	}
+	else {
+		printf("\nDelta negativo! Sem raízes reais!\n");
+	}
 
 	free(cpu);
 }

@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <stdbool.h>
 
 #include "programas.h"
 
@@ -11,6 +12,18 @@ int programaMulti(CPU *cpu, int a, int b){
   RAM *ram = criarRAM_vazia(2);
   Instruction **trecho1;
   trecho1 = (Instruction**) malloc(3 * sizeof(Instruction*));
+
+  bool eraNeg1 = false;
+  bool eraNeg2 = false;
+  if (a < 0) {
+    a = -a;
+    eraNeg1 = true;
+  }
+
+  if (b < 0) {
+    b = -b;
+    eraNeg2 = true;
+  } 
 
   trecho1[0] = setInstruction(1, a, -1, 4); //reg1 <- a
   trecho1[1] = setInstruction(1, 1, -1, 2); //ram[1] <- reg1
@@ -38,11 +51,32 @@ int programaMulti(CPU *cpu, int a, int b){
   result = getDado(0, ram);
   ram = liberarRAM(ram);
 
-  return result;
+  if (eraNeg1 && eraNeg2) {
+    return result;
+  }
+  else if (!eraNeg1 && !eraNeg2) {
+    return result;
+  }
+  else {
+    return -result;
+  }
 }
 
 int programaDiv(CPU *cpu, int dividendo, int divisor){
   RAM *ram = criarRAM_vazia(5);
+  
+  bool eraNeg1 = false;
+  bool eraNeg2 = false;
+
+  if (divisor < 0) {
+    divisor = -divisor;
+    eraNeg1 = true;
+  }
+
+  if (dividendo < 0) {
+    dividendo = -dividendo;
+    eraNeg2 = true;
+  }
 
   Instruction **trecho1 = (Instruction **) malloc(5 * sizeof(Instruction*));
   trecho1[0] = setInstruction(1, dividendo, -1, 4); //reg1 <- dividendo
@@ -105,8 +139,15 @@ int programaDiv(CPU *cpu, int dividendo, int divisor){
 
   ram = liberarRAM(ram);
 
-  return result;
-
+  if (eraNeg1 && eraNeg2) {
+    return result;
+  }
+  else if (!eraNeg1 && !eraNeg2) {
+    return result;
+  }
+  else {
+    return -result;
+  }
 }
 
 int programaRaizAproximada(CPU *cpu, int valor) {
@@ -254,7 +295,7 @@ int programaFatorial(CPU *cpu, int valor) {
   return aux;
 }
 
-void programaBhaskara(CPU *cpu, int a, int b, int c, int *res) {
+int programaBhaskara(CPU *cpu, int a, int b, int c, int *res) {
   // criação de RAM temporária
   RAM *ram = criarRAM_vazia(2);
 
@@ -264,36 +305,41 @@ void programaBhaskara(CPU *cpu, int a, int b, int c, int *res) {
   
   // calculo de delta
   int delta = programaMulti(cpu, b, b) - programaMulti(cpu, 4, programaMulti(cpu, a, c));
-  
-  // calculo de x1
-  int x1 = programaDiv(cpu, (-b + programaRaizAproximada(cpu, delta) ), programaMulti(cpu, 2, a)); 
-  
-  trecho[0] = setInstruction(1, x1, -1, 4); // envia res para o registrador 1
-  trecho[1] = setInstruction(1, 0, -1, 5); // passa valor do registrador 1 (x1) para a ram[0]
-  trecho[2] = setInstruction(-1, -1, -1, -1); // haut
 
-  setPrograma(cpu, trecho, 3); // envia as instruções para a cpu
-  iniciar(cpu, ram); // executa as instruções na cpu
-  destroiPrograma(cpu, 3); // free no programa criado   
+  if (delta<0) {
+    return 0;
+  }
+  else {
+    // calculo de x1
+    int x1 = programaDiv(cpu, (-b + programaRaizAproximada(cpu, delta) ), programaMulti(cpu, 2, a)); 
 
-  // calculo de x2
-  int x2 = programaDiv(cpu, (-b - programaRaizAproximada(cpu, delta) ), programaMulti(cpu, 2, a)); 
-  
-  trecho[0] = setInstruction(1, x2, -1, 4); // envia res para o registrador 1
-  trecho[1] = setInstruction(1, 1, -1, 5); // passa valor do registrador 2 (x2) para a ram[1]
-  trecho[2] = setInstruction(-1, -1, -1, -1); // haut
+    trecho[0] = setInstruction(1, x1, -1, 4); // envia res para o registrador 1
+    trecho[1] = setInstruction(1, 0, -1, 5); // passa valor do registrador 1 (x1) para a ram[0]
+    trecho[2] = setInstruction(-1, -1, -1, -1); // haut
+    
+    setPrograma(cpu, trecho, 3); // envia as instruções para a cpu
+    iniciar(cpu, ram); // executa as instruções na cpu
+    destroiPrograma(cpu, 3); // free no programa criado   
 
-  setPrograma(cpu, trecho, 3); // envia as instruções para a cpu
-  iniciar(cpu, ram); // executa as instruções na cpu
-  destroiPrograma(cpu, 3); // free no programa criado   
+    // calculo de x2
+    int x2 = programaDiv(cpu, (-b - programaRaizAproximada(cpu, delta) ), programaMulti(cpu, 2, a)); 
+    
+    trecho[0] = setInstruction(1, x2, -1, 4); // envia res para o registrador 1
+    trecho[1] = setInstruction(1, 1, -1, 5); // passa valor do registrador 2 (x2) para a ram[1]
+    trecho[2] = setInstruction(-1, -1, -1, -1); // haut
 
-  // liberando memorias alocadas
-  trecho = destroiTrecho(trecho, 3);
-  liberarRAM(ram);
+    setPrograma(cpu, trecho, 3); // envia as instruções para a cpu
+    iniciar(cpu, ram); // executa as instruções na cpu
+    destroiPrograma(cpu, 3); // free no programa criado   
 
-  // atualizando vetor de resultados
-  res[0] = x1;
-  res[1] = x2;
+    // liberando memorias alocadas
+    trecho = destroiTrecho(trecho, 3);
+    liberarRAM(ram);
 
-  return;
+    // atualizando vetor de resultados
+    res[0] = x1;
+    res[1] = x2;
+    
+    return 1;
+  }
 }
