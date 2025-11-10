@@ -29,7 +29,8 @@ int main() {
 void programas(){
 	//RAM *ram;
 	CPU *cpu;
-	int a, b;
+	int a, b, c;
+	int res[2];
 
 	cpu = criarCPU();
 	//ram = criarRAM_vazia(1);
@@ -76,12 +77,17 @@ void programas(){
 
 	ramMatriz1 = liberarRAM(ramMatriz1);
 	ramMatriz2 = liberarRAM(ramMatriz2);
-	resultadoMultMatrizes = liberarRAM(resultadoMultMatrizes);
 
 	//fatorial
 	printf("\nDigite um valor para calcular seu fatorial: ");
 	scanf("%d", &a);
 	printf("\nFatorial de %d = %d\n", a, programaFatorial(cpu, a));
+
+	//formula de bhaskara
+	printf("\nDigite a, b e c para calcular a fórmula de bháskara: ");
+	scanf("%d%d%d", &a, &b, &c);
+	programaBhaskara(cpu, a, b, c, res);
+	printf("\nX1 = %d\nX2 = %d\n", res[0], res[1]);
 
 	free(cpu);
 }
