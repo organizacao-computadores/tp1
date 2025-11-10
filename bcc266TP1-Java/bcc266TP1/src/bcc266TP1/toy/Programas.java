@@ -17,8 +17,8 @@ public class Programas {
 		cpu = new CPU();
 		
 		//programaAleatorio(ram, cpu, 2000000);
-		programaMult(ram, cpu, 15, 150);
-		//programaDiv(ram, cpu, 175, 4);
+		//programaMult(ram, cpu, 15, 150);
+		programaDiv(ram, cpu, 100, 20);
 		//programaFat(ram, cpu, 10);
 		//programaSomaMatriz(ram, cpu, 3);//3x3
 		
@@ -403,7 +403,7 @@ public class Programas {
 		inst5.add1 = 1;//registrador1
 		inst5.add2 = 0;//ram[0]
 		inst5.add3 = -1;
-		trecho3[0] = inst5;
+//		trecho3[0] = inst5;
 		
 		Instrucao inst6 = new Instrucao();
 		inst6.opcode = 5;

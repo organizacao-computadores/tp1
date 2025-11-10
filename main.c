@@ -11,7 +11,7 @@ void programas();
 
 int main() {
 	srand(time(NULL));
-		
+
 	int n;
 	printf("Insira o tamanho da memória: ");
 	scanf("%d", &n);
@@ -38,6 +38,11 @@ void programas(){
 
 
 	printf("\nAxB = %d\n", programaMulti(ram, cpu, a, b));
+
+	printf("\nInsira a e b: \n");
+	scanf("%d%d", &a, &b);
+
+	printf("\nA/B = %d\n", programaDiv(ram, cpu, a, b));
 
 	if(ram != NULL)
 		free(ram);

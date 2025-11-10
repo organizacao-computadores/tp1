@@ -116,6 +116,7 @@ void destroiPrograma(CPU *cpu, int tamanhoPrograma){
 	for(int i = 0; i < tamanhoPrograma; i++){
 		cpu->programa[i] = destroiInstruction(cpu->programa[i]);
 	}
+	
 	free(cpu->programa);
 
 }

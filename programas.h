@@ -6,6 +6,7 @@
 #include "instrucao.h"
 
 int programaMulti(RAM *ram, CPU *cpu, int a, int b);
+int programaDiv(RAM *ram, CPU *cpu, int dividendo, int divisor);
 
 
 #endif
