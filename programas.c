@@ -343,3 +343,40 @@ int programaBhaskara(CPU *cpu, int a, int b, int c, int *res) {
     return 1;
   }
 }
+
+int programaExponencial(CPU *cpu, int base, int expoente){
+  int resultado, tempMult;
+
+  RAM *ram = criarRAM_vazia(2);
+  Instruction **trecho1 = (Instruction **) malloc(5 * sizeof(Instruction*));
+  trecho1[0] = setInstruction(1, 1, -1, 4);
+  trecho1[1] = setInstruction(1, 0, -1, 5);
+  trecho1[2] = setInstruction(2, base, -1, 4);
+  trecho1[3] = setInstruction(2, 1, -1, 5);
+  trecho1[4] = setInstruction(-1, -1, -1, -1);
+
+  setPrograma(cpu, trecho1, 5);
+  iniciar(cpu, ram);
+  destroiPrograma(cpu, 5);
+
+  trecho1 = destroiTrecho(trecho1, 5);
+
+  Instruction **trecho2 = (Instruction **) malloc(3 * sizeof(Instruction*));
+  for(int i = 0; i < expoente; i++){
+    tempMult = programaMulti(cpu, getDado(0, ram), getDado(1, ram));
+    trecho2[0] = setInstruction(1, tempMult, -1, 4);
+    trecho2[1] = setInstruction(1, 0, -1, 5);
+    trecho2[2] = setInstruction(-1, -1, -1, -1);
+
+    setPrograma(cpu, trecho2, 3);
+    iniciar(cpu, ram);
+    destroiPrograma(cpu, 3);
+  }
+
+  trecho2 = destroiTrecho(trecho2, 3);
+
+  resultado = getDado(0, ram);
+
+  return resultado;
+  
+}

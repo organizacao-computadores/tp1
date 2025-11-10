@@ -97,5 +97,9 @@ void programas(){
 		printf("\nDelta negativo! Sem raízes reais!\n");
 	}
 
+	printf("\nDigite base e expoente para calcular exponenciação: ");
+	scanf("%d%d", &a, &b);
+	printf("\n%d ^ %d = %d\n", a, b, programaExponencial(cpu, a, b));
+
 	free(cpu);
 }
