@@ -36,7 +36,7 @@ int programaMulti(CPU *cpu, int a, int b){
   trecho2 = destroiTrecho(trecho2, 2);
 
   result = getDado(0, ram);
-  ram = liberarRAM(2, ram);
+  ram = liberarRAM(ram);
 
   return result;
 }
@@ -103,7 +103,7 @@ int programaDiv(CPU *cpu, int dividendo, int divisor){
 
   trecho4 = destroiTrecho(trecho4, 3);
 
-  ram = liberarRAM(5, ram);
+  ram = liberarRAM(ram);
 
   return result;
 
@@ -135,7 +135,7 @@ int programaRaizAproximada(CPU *cpu, int valor) {
  
   // libera memória alocada
   trecho = destroiTrecho(trecho, 3);
-  liberarRAM(2, ram);
+  liberarRAM(ram);
 
   return i-2;
 }
@@ -242,7 +242,7 @@ int programaFatorial(CPU *cpu, int valor) {
   }
 
   // free nas memórias alocadas
-  liberarRAM(2, ram);
+  liberarRAM(ram);
   destroiTrecho(trecho, 3);
 
   return aux;

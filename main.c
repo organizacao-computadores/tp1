@@ -20,7 +20,7 @@ int main() {
 	printf("\nRam aleatoria gerada: \n");
 	imprimir(ram);
 
-	liberarRAM(n, ram);
+	liberarRAM(ram);
 
 	programas();
 
@@ -74,9 +74,9 @@ void programas(){
 	printf("\nMatriz1 X Matriz2:\n");
 	imprimir(resultadoMultMatrizes);
 
-	ramMatriz1 = liberarRAM(n1 * m1, ramMatriz1);
-	ramMatriz2 = liberarRAM(n2 * m2, ramMatriz2);
-	resultadoMultMatrizes = liberarRAM(m1 * n2, resultadoMultMatrizes);
+	ramMatriz1 = liberarRAM(ramMatriz1);
+	ramMatriz2 = liberarRAM(ramMatriz2);
+	resultadoMultMatrizes = liberarRAM(resultadoMultMatrizes);
 
 	//fatorial
 	printf("\nDigite um valor para calcular seu fatorial: ");

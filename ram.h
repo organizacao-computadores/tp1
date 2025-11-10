@@ -7,7 +7,7 @@ typedef struct ram RAM;
 RAM* criarRAM(int tamanho);
 RAM* criarRAM_vazia(int tamanho);
 RAM* criarRAM_aleatoria(int tamanho);
-RAM* liberarRAM(int tamanho, RAM *ram);
+RAM* liberarRAM(RAM *ram);
 void setDado(int endereco, int conteudo, RAM *ram);
 int getDado(int endereco, RAM *ram);
 void imprimir(RAM *ram);

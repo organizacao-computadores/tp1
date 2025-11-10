@@ -36,7 +36,7 @@ RAM* criarRAM_aleatoria(int tamanho) {
 	return ram;
 }
 
-RAM* liberarRAM(int tamanho, RAM *ram) {
+RAM* liberarRAM(RAM *ram) {
 	free(ram->memoria);
 	ram->memoria = NULL;
 	ram->tamanho = 0;
