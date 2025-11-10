@@ -214,12 +214,13 @@ RAM *programaMultiplicaMatriz(CPU *cpu, RAM *matriz1, int n1, int m1, RAM *matri
 }
 
 int programaFatorial(CPU *cpu, int valor) {
+  // criação de RAM temporária
   RAM *ram = criarRAM_vazia(2);
 
-  //cria um vetor de instruções
+  // cria um vetor de instruções
   Instruction **trecho = (Instruction **) malloc(3 * sizeof(Instruction *));
 
-  //multiplica todos os valores de 'valor' até '2'
+  // multiplica todos os valores de 'valor' até '2'
   int aux = valor;
   for (int i = valor-1; i > 1; i--) {
     aux = programaMulti(cpu, aux, i);
@@ -240,4 +241,14 @@ int programaFatorial(CPU *cpu, int valor) {
   return aux;
 }
 
-//teste branch
+int programaBhaskara(CPU *cpu, int a, int b, int c) {
+  // criação de RAM temporária
+  RAM *ram = criarRAM_vazia(5);
+
+  // cria vetor de instruções
+  Instruction **trecho = (Instruction **) malloc(3 * sizeof(Instruction *));
+
+  // calculo de delta
+  int aux = programaMulti(cpu, a, c);
+  
+}
