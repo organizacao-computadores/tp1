@@ -7,6 +7,7 @@
 
 int programaMulti(CPU *cpu, int a, int b);
 int programaDiv(CPU *cpu, int dividendo, int divisor);
+int programaRaizAproximada(CPU *cpu, int valor);
 
 
 #endif

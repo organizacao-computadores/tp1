@@ -24,12 +24,12 @@ CPU *criarCPU(){
 	}
 	else
 		printf("\nErro ao criar CPU\n");
+	
 	return result;
 }
 
 
 void setPrograma(CPU *cpu, Instruction **programa, int tamanhoPrograma){
-
 	cpu->programa = (Instruction**) malloc(tamanhoPrograma * sizeof(Instruction*));
 	for(int i = 0; i < tamanhoPrograma; i++){
 		cpu->programa[i] = programa[i];
@@ -112,11 +112,9 @@ void iniciar(CPU *cpu, RAM *ram){
 }
 
 void destroiPrograma(CPU *cpu, int tamanhoPrograma){
-
 	for(int i = 0; i < tamanhoPrograma; i++){
 		cpu->programa[i] = destroiInstruction(cpu->programa[i]);
 	}
 	
 	free(cpu->programa);
-
 }

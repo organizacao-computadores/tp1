@@ -13,11 +13,9 @@ int programaMulti(CPU *cpu, int a, int b){
   trecho1[1] = setInstruction(1, 1, -1, 2); //ram[1] <- reg1
   trecho1[2] = setInstruction(-1, -1, -1, -1); //halt
 
-
   setPrograma(cpu, trecho1, 3);
   iniciar(cpu, ram);
   destroiPrograma(cpu, 3);
-
 
   trecho1 = destroiTrecho(trecho1, 3);
 
@@ -106,4 +104,32 @@ int programaDiv(CPU *cpu, int dividendo, int divisor){
 
   return result;
 
+}
+
+int programaRaizAproximada(CPU *cpu, int valor) {
+  RAM *ram = criarRAM_vazia(2);
+
+  //cria um vetor de instruções
+  Instruction **trecho = (Instruction **) malloc(3 * sizeof(Instruction *));
+  int aux = 0;
+  
+  // multiplica i^2 até o resultado ser maior que o valor digitadp, e retorna i-1
+  int i;
+  for (i=1; aux<valor; i++) {
+    aux = programaMulti(cpu, i, i);
+    
+    trecho[0] = setInstruction(1, aux, -1, 4); // envia aux para o registrador 1
+    trecho[1] = setInstruction(1, 0, -1, 5); // passa valor do registrador 1 (aux) para a ram[0]
+    trecho[2] = setInstruction(-1, -1, -1, -1); // haut
+
+    setPrograma(cpu, trecho, 3); // envia as instruções para a cpu
+    iniciar(cpu, ram); // executa as instruções na cpu
+    destroiPrograma(cpu, 3); // free no programa criado
+  }
+
+  // libera memória alocada
+  trecho = destroiTrecho(trecho, 3);
+  liberarRAM(2, ram);
+
+  return i-1;
 }

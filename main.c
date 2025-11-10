@@ -34,17 +34,22 @@ void programas(){
 	cpu = criarCPU();
 	//ram = criarRAM_vazia(1);
 
-	printf("\nInsira a e b: \n");
+	printf("\nInsira a e b para multiplicação: \n");
 	scanf("%d%d", &a, &b);
-
-
 
 	printf("\nAxB = %d\n", programaMulti(cpu, a, b));
 
-	printf("\nInsira a e b: \n");
+	printf("\nInsira a e b para divisão: \n");
 	scanf("%d%d", &a, &b);
 
 	printf("\nA/B = %d\n", programaDiv(cpu, a, b));
+
+	printf("\nInsira a para cálculo da raiz: \n");
+	scanf("%d", &a);
+
+	printf("\nRaiz de a = %d\n", programaRaizAproximada(cpu, a));
+
+
 
 	free(cpu);
 }
