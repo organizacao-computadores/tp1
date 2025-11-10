@@ -133,3 +133,9 @@ int programaRaizAproximada(CPU *cpu, int valor) {
 
   return i-1;
 }
+
+int econtrarPosicaoMatriz(RAM *ram, int posInicial, int nLinhas, int mColunas, int i, int j){
+  int endereco;
+  endereco = (posInicial + i * mColunas + j);
+  return endereco;
+}
