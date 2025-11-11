@@ -131,6 +131,20 @@ void programas(){
 	scanf("%d %d %d", &a1, &n, &r);
 	printf("\nSoma dos termos = %d\n", programaSomaTermosPA(cpu, a1, n, r));
 
+	// modulo
+	printf("\nInsira A e B para obter o módulo entre eles: ");
+	scanf("%d %d", &a, &b);
+	printf("\nO módulo de A/B = %d\n", programaModulo(cpu, a, b));
+
+	// numero primo
+	int val;
+	printf("Insira um número para verificar se ele é primo: ");
+	scanf("%d", &val);
+	if (programaEhNumeroPrimo(cpu, val))
+		printf("\nO número %d é primo.\n", val);
+	else
+		printf("\nO número %d não é primo.\n", val);
+
 	ram = liberarRAM(ram);
 
 	free(cpu);
