@@ -19,5 +19,6 @@ RAM *criaMatriz(int n, int m, RAM *ram);
 int programaRaizCubicaAroximada(CPU *cpu, int valor);
 RAM *programaFibonacci(CPU *cpu, RAM *ram,int n);
 int programaTermoPA(CPU *cpu, int a1, int n, int r);
+int programaSomaTermosPA(CPU *cpu, int a1, int n, int r);
 
 #endif

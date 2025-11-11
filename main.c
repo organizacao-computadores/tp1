@@ -51,38 +51,38 @@ void programas(){
 	printf("\nInsira n e m para criar uma matriz: ");
 	scanf("%d%d", &n1, &m1);
 
-	// RAM *ram = NULL;
-	// ram = criaMatriz(n1, m1, ram);
-	// ram = programaPreencheMatriz(cpu, ram, 0, n1, m1);
-	// int tamM1 = getTamanho(ram);
+	ram = NULL;
+	ram = criaMatriz(n1, m1, ram);
+	ram = programaPreencheMatriz(cpu, ram, 0, n1, m1);
+	int tamM1 = getTamanho(ram);
 
 	printf("Resultado da matriz preenchida:\n");
 	imprimir(ram);
 
-	// printf("\nInsira n e m para criar outra matriz: \n");
-	// scanf("%d%d", &n2, &m2);
+	printf("\nInsira n e m para criar outra matriz: \n");
+	scanf("%d%d", &n2, &m2);
 
-	// int tamM2 = programaMulti(cpu, n2, m2);
+	int tamM2 = programaMulti(cpu, n2, m2);
 
-	// ram = aumentarRam(ram, tamM1 + tamM2);
-	// ram = programaPreencheMatriz(cpu, ram, tamM1, n2, m2);
+	ram = aumentarRam(ram, tamM1 + tamM2);
+	ram = programaPreencheMatriz(cpu, ram, tamM1, n2, m2);
 
-	// printf("\nResultado da matriz preenchida:\n");
-	// imprimir(ram);
+	printf("\nResultado da matriz preenchida:\n");
+	imprimir(ram);
 
 	printf("\nMatriz1 X Matriz2:\n");
 	ram = programaMultiplicaMatriz(cpu, ram, n1, m1, n2, m2);
 
-	// ram = liberarRAM(ram);
+	ram = liberarRAM(ram);
 
 	//fatorial
 	printf("\nDigite um valor para calcular seu fatorial: ");
 	scanf("%d", &a);
 	printf("Fatorial de %d = %d\n", a, programaFatorial(cpu, a));
 
-	// //formula de bhaskara
-	// printf("\nDigite a, b e c para calcular a fórmula de bháskara: ");
-	// scanf("%d%d%d", &a, &b, &c);
+	//formula de bhaskara
+	printf("\nDigite a, b e c para calcular a fórmula de bháskara: ");
+	scanf("%d%d%d", &a, &b, &c);
 	int aux = programaBhaskara(cpu, a, b, c, res);
 	
 	if (aux) {
@@ -103,10 +103,11 @@ void programas(){
 	printf("log(%d, %d) = %d\n", a, b, programaLog(cpu, a, b));
 
 	//raiz cubica
-	// printf("\nInsira um valor para calcular sua raiz cubica aproximada: ");
-	// scanf("%d", &a);
-	// printf("Raiz cubica de %d = %d\n", a, programaRaizCubicaAroximada(cpu, a));
+	printf("\nInsira um valor para calcular sua raiz cubica aproximada: ");
+	scanf("%d", &a);
+	printf("Raiz cubica de %d = %d\n", a, programaRaizCubicaAroximada(cpu, a));
 
+	// n-esimo termo da pa
 	int a1, n, r;
 	printf("\nInsira a1, n e r para calcular o n-ésimo termo da PA: ");
 	scanf("%d %d %d", &a1, &n, &r);
@@ -123,8 +124,12 @@ void programas(){
 	for(int i = 0; i < a; i++){
 		printf("%d ", getDado(i, ram));
 	}
-
 	printf("\n");
+
+	// soma dos termos da pa
+	printf("\nInsira a1, n e r para calcular a soma dos termos da PA: ");
+	scanf("%d %d %d", &a1, &n, &r);
+	printf("\nSoma dos termos = %d\n", programaSomaTermosPA(cpu, a1, n, r));
 
 	ram = liberarRAM(ram);
 

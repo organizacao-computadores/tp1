@@ -557,3 +557,51 @@ RAM *programaFibonacci(CPU *cpu, RAM *ram, int n){
   return ram;
 
 }
+
+int programaSomaTermosPA(CPU* cpu, int a1, int n, int r) {
+  RAM *ram = criarRAM_vazia(3);
+  int an = programaTermoPA(cpu, a1, n, r);
+
+  Instruction **trecho1 = (Instruction **) malloc(6 * sizeof(Instruction *));
+  trecho1[0] = setInstruction(1, an, -1, 4); // reg1 <- an
+  trecho1[1] = setInstruction(1, 0, -1, 5); // ram[0] <- reg1
+  trecho1[2] = setInstruction(2, a1, -1, 4); // reg2 <- a1
+  trecho1[3] = setInstruction(2, 1, -1, 5); // ram[1] <- reg2
+  trecho1[4] = setInstruction(0, 1, 0, 0); // soma de an + a1 salva na ram[0]
+  trecho1[5] = setInstruction(-1, -1, -1, -1);
+
+  setPrograma(cpu, trecho1, 6);
+  iniciar(cpu, ram);
+  destroiPrograma(cpu, 6);
+
+  trecho1 = destroiTrecho(trecho1, 6);
+
+  Instruction **trecho2 = (Instruction **) malloc(3 * sizeof(Instruction *));
+  trecho2[0] = setInstruction(1, n, -1, 4); // reg1 <- n
+  trecho2[1] = setInstruction(1, 1, -1, 5); // ram[1] <- reg1
+  trecho2[2] = setInstruction(-1, -1, -1, -1);
+
+  setPrograma(cpu, trecho2, 3);
+  iniciar(cpu, ram);
+  destroiPrograma(cpu, 3);
+
+  trecho2 = destroiTrecho(trecho2, 3);
+
+  int temp = programaMulti(cpu, getDado(0, ram), getDado(1, ram)); // (a1 + an) x n
+
+  Instruction **trecho3 = (Instruction **)malloc(5 * sizeof(Instruction *));
+  trecho3[0] = setInstruction(1, temp, -1, 4); // reg1 <- temp
+  trecho3[1] = setInstruction(1, 0, -1, 5); // ram[0] <- reg1
+  trecho3[2] = setInstruction(2, 2, -1, 4); // reg2 <- 2
+  trecho3[3] = setInstruction(2, 1, -1, 5); // ram[1] <- reg2
+  trecho3[4] = setInstruction(-1, -1, -1, -1);
+
+  setPrograma(cpu, trecho3, 5);
+  iniciar(cpu, ram);
+  destroiPrograma(cpu, 5);
+
+  trecho3 = destroiTrecho(trecho3, 5);
+
+  int result = programaDiv(cpu, getDado(0, ram), getDado(1, ram));
+  return result;
+}
