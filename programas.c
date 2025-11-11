@@ -151,7 +151,7 @@ int programaDiv(CPU *cpu, int dividendo, int divisor){
 }
 
 int programaRaizAproximada(CPU *cpu, int valor) {
-  RAM *ram = criarRAM_vazia(2);
+  RAM *ram = criarRAM_vazia(1);
 
   //cria um vetor de instruções
   Instruction **trecho = (Instruction **) malloc(3 * sizeof(Instruction *));
@@ -165,7 +165,7 @@ int programaRaizAproximada(CPU *cpu, int valor) {
     
     trecho[0] = setInstruction(1, aux, -1, 4); // envia aux para o registrador 1
     trecho[1] = setInstruction(1, 0, -1, 5); // passa valor do registrador 1 (aux) para a ram[0]
-    trecho[2] = setInstruction(-1, -1, -1, -1); // haut
+    trecho[2] = setInstruction(-1, -1, -1, -1); // halt
 
     setPrograma(cpu, trecho, 3); // envia as instruções para a cpu
     iniciar(cpu, ram); // executa as instruções na cpu
@@ -391,7 +391,36 @@ int programaExponencial(CPU *cpu, int base, int expoente){
 
   resultado = getDado(0, ram);
   ram = liberarRAM(ram);
-  
+
   return resultado;
   
+}
+
+int programaLog(CPU *cpu, int base, int logaritmando){
+  RAM *ram = criarRAM_vazia(1);
+
+  Instruction **trecho = (Instruction **) malloc(3 * sizeof(Instruction *));
+
+  int aux = 0;
+  int i = 0;
+
+  while(aux <= logaritmando){
+    aux = programaExponencial(cpu, base, i);
+
+    trecho[0] = setInstruction(1, aux, -1, 4); // envia aux para o registrador 1
+    trecho[1] = setInstruction(1, 0, -1, 5); // passa valor do registrador 1 (aux) para a ram[0]
+    trecho[2] = setInstruction(-1, -1, -1, -1); // halt
+
+    setPrograma(cpu, trecho, 3);
+    iniciar(cpu, ram);
+    destroiPrograma(cpu, 3);
+
+    i++;
+
+  }
+
+  trecho = destroiTrecho(trecho, 3);
+  ram = liberarRAM(ram);
+
+  return i-2;
 }

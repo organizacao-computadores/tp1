@@ -11,6 +11,7 @@ int programaRaizAproximada(CPU *cpu, int valor);
 int programaFatorial(CPU *cpu, int valor);
 int programaExponencial(CPU *cpu, int base, int expoente);
 int programaBhaskara(CPU *cpu, int a, int b, int c, int *res);
+int programaLog(CPU *cpu, int base, int logaritmando);
 RAM *programaPreencheMatriz(CPU *cpu, RAM *ram, int pontoDePartida, int n, int m);
 RAM *programaMultiplicaMatriz(CPU *cpu, RAM *ram, int n1, int m1, int n2, int m2);
 void imprimirMatriz(CPU *cpu, RAM *ram, int pontoDePartida, int n, int m);

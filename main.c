@@ -99,5 +99,9 @@ void programas(){
 	scanf("%d%d", &a, &b);
 	printf("\n%d ^ %d = %d\n", a, b, programaExponencial(cpu, a, b));
 
+	printf("\nDigite base e logaritmando para calcular: ");
+	scanf("%d%d", &a, &b);
+	printf("\nlog(%d, %d) = %d\n", a, b, programaLog(cpu, a, b));
+
 	free(cpu);
 }
