@@ -13,6 +13,7 @@ int programaExponencial(CPU *cpu, int base, int expoente);
 int programaBhaskara(CPU *cpu, int a, int b, int c, int *res);
 RAM *programaPreencheMatriz(CPU *cpu, RAM *ram, int pontoDePartida, int n, int m);
 RAM *programaMultiplicaMatriz(CPU *cpu, RAM *ram, int n1, int m1, int n2, int m2);
+void imprimirMatriz(CPU *cpu, RAM *ram, int pontoDePartida, int n, int m);
 RAM *criaMatriz(int n, int m, RAM *ram);
 
 

@@ -74,7 +74,6 @@ RAM *aumentarRam(RAM *ram, int novoTamanho){
 		for(int i = ram->tamanho; i < novoTamanho; i++){
 			ram->memoria[i] = 0;
 		}
-		printf("\nTamanho inicial da RAM: %d | novo tamanho: %d\n", ram->tamanho, novoTamanho);
 		ram->tamanho = novoTamanho;
 	}
 

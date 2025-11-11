@@ -33,7 +33,6 @@ void programas(){
 	int res[2];
 
 	cpu = criarCPU();
-	//ram = criarRAM_vazia(1);
 
 	//multiplicação
 	printf("\nInsira dois valores para multiplicação: \n");
@@ -73,10 +72,9 @@ void programas(){
 	printf("\nResultado da matriz preenchida:\n");
 	imprimir(ram);
 
+	printf("\nMatriz1 X Matriz2:\n");
 	ram = programaMultiplicaMatriz(cpu, ram, n1, m1, n2, m2);
 
-	printf("\nMatriz1 X Matriz2:\n");
-	imprimir(ram);
 
 	ram = liberarRAM(ram);
 

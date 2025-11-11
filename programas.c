@@ -213,7 +213,7 @@ RAM *programaPreencheMatriz(CPU *cpu, RAM *ram, int pontoDePartida,int n, int m)
     }
   }
 
-  imprimir(ram);
+  imprimirMatriz(cpu, ram, pontoDePartida, n, m);
 
   trecho = destroiTrecho(trecho, 3);
 
@@ -265,8 +265,22 @@ RAM *programaMultiplicaMatriz(CPU *cpu, RAM *ram, int n1, int m1, int n2, int m2
 
   trecho = destroiTrecho(trecho, 6);
   tempSoma = liberarRAM(tempSoma);
+
+  imprimirMatriz(cpu, ram, (tamanhoM1 + tamanhoM2), n1, m2);
   return ram;
 }
+
+void imprimirMatriz(CPU *cpu, RAM *ram, int pontoDePartida, int n, int m){
+  int endereco;
+  for(int i = 0; i < n; i++){
+    for(int j = 0; j < m; j++){
+      endereco = encontrarPosicaoMatriz(cpu, pontoDePartida, n, m, i, j);
+      printf("%d ", getDado(endereco, ram));
+    }
+    printf("\n");
+  }
+}
+
 
 int programaFatorial(CPU *cpu, int valor) {
   RAM *ram = criarRAM_vazia(2);
@@ -376,7 +390,8 @@ int programaExponencial(CPU *cpu, int base, int expoente){
   trecho2 = destroiTrecho(trecho2, 3);
 
   resultado = getDado(0, ram);
-
+  ram = liberarRAM(ram);
+  
   return resultado;
   
 }
