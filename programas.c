@@ -173,7 +173,7 @@ int programaRaizAproximada(CPU *cpu, int valor) {
 
     i++;
   }
- 
+
   // libera memória alocada
   trecho = destroiTrecho(trecho, 3);
   liberarRAM(ram);
@@ -423,4 +423,31 @@ int programaLog(CPU *cpu, int base, int logaritmando){
   ram = liberarRAM(ram);
 
   return i-2;
+}
+
+int programaRaizCubicaAroximada(CPU *cpu, int valor) {
+  RAM *ram = criarRAM_vazia(1);
+
+  Instruction **trecho = (Instruction **) malloc(3 * sizeof(Instruction*));
+  int aux = 0;
+  int i = 1;
+
+  while (aux <= valor) {
+    aux = programaExponencial(cpu, i, 3);
+
+    trecho[0] = setInstruction(1, aux, -1, 4); // reg1 recebe aux; reg1 = aux
+    trecho[1] = setInstruction(1, 0, -1, 5); // ram[0] recebe o valor do reg1
+    trecho[2] = setInstruction(-1, -1, -1, -1); // halt
+
+    setPrograma(cpu, trecho, 3);
+    iniciar(cpu, ram);
+    destroiPrograma(cpu, 3);
+
+    i++;
+  }
+
+  trecho = destroiTrecho(trecho, 3);
+  liberarRAM(ram);
+
+  return i - 2;
 }

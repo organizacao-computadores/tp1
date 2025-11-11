@@ -103,5 +103,9 @@ void programas(){
 	scanf("%d%d", &a, &b);
 	printf("\nlog(%d, %d) = %d\n", a, b, programaLog(cpu, a, b));
 
+	printf("\nInsira um valor para calcular sua raiz cubica aproximada: ");
+	scanf("%d", &a);
+	printf("\nRaiz cubica de %d = %d\n", a, programaRaizCubicaAroximada(cpu, a));
+
 	free(cpu);
 }

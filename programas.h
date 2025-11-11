@@ -16,6 +16,6 @@ RAM *programaPreencheMatriz(CPU *cpu, RAM *ram, int pontoDePartida, int n, int m
 RAM *programaMultiplicaMatriz(CPU *cpu, RAM *ram, int n1, int m1, int n2, int m2);
 void imprimirMatriz(CPU *cpu, RAM *ram, int pontoDePartida, int n, int m);
 RAM *criaMatriz(int n, int m, RAM *ram);
-
+int programaRaizCubicaAroximada(CPU *cpu, int valor);
 
 #endif
