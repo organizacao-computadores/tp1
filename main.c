@@ -131,6 +131,11 @@ void programas(){
 	scanf("%d %d %d", &a1, &n, &r);
 	printf("\nSoma dos termos = %d\n", programaSomaTermosPA(cpu, a1, n, r));
 
+	// modulo
+	printf("\nInsira A e B para obter o módulo entre eles: ");
+	scanf("%d %d", &a, &b);
+	printf("\nO módulo de A/B = %d\n", programaModulo(cpu, a, b));
+
 	ram = liberarRAM(ram);
 
 	free(cpu);

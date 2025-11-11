@@ -603,5 +603,44 @@ int programaSomaTermosPA(CPU* cpu, int a1, int n, int r) {
   trecho3 = destroiTrecho(trecho3, 5);
 
   int result = programaDiv(cpu, getDado(0, ram), getDado(1, ram));
+  ram = liberarRAM(ram);
+  return result;
+}
+
+int programaModulo(CPU* cpu, int a, int b) {
+  RAM *ram = criarRAM_vazia(3);
+
+  Instruction **trecho1 = (Instruction **)malloc(5 * sizeof(Instruction *));
+  trecho1[0] = setInstruction(1, a, -1, 4);
+  trecho1[1] = setInstruction(1, 0, -1, 5); 
+  trecho1[2] = setInstruction(2, b, -1, 4);
+  trecho1[3] = setInstruction(2, 1, -1, 5);
+  trecho1[4] = setInstruction(-1, -1, -1, -1);
+
+  setPrograma(cpu, trecho1, 5);
+  iniciar(cpu, ram);
+  destroiPrograma(cpu, 5);
+
+  trecho1 = destroiTrecho(trecho1, 5);
+
+  int div = programaDiv(cpu, getDado(0, ram), getDado(1, ram)); // divisão entre a e b
+
+  int mult = programaMulti(cpu, div, getDado(1, ram));
+
+  Instruction **trecho2 = (Instruction **)malloc(6 * sizeof(Instruction *));
+  trecho2[0] = setInstruction(1, mult, -1, 4);
+  trecho2[1] = setInstruction(1, 2, -1, 5);
+  trecho2[2] = setInstruction(0, 2, 0, 1);
+  trecho2[3] = setInstruction(-1, -1, -1, -1);
+
+  setPrograma(cpu, trecho2, 4);
+  iniciar(cpu, ram);
+  destroiPrograma(cpu, 4);
+
+  int result = getDado(0, ram);
+
+  trecho2 = destroiTrecho(trecho2, 4);
+  ram = liberarRAM(ram);
+
   return result;
 }
