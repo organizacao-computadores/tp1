@@ -25,10 +25,10 @@ int main() {
 }
 
 void programas(){
-	//RAM *ram;
+	RAM *ram;
 	CPU *cpu;
-	// int a, b, c;
-	// int res[2];
+	int a, b, c;
+	int res[2];
 
 	cpu = criarCPU();
 
@@ -83,7 +83,7 @@ void programas(){
 	// //formula de bhaskara
 	// printf("\nDigite a, b e c para calcular a fórmula de bháskara: ");
 	// scanf("%d%d%d", &a, &b, &c);
-	// int aux = programaBhaskara(cpu, a, b, c, res);
+	int aux = programaBhaskara(cpu, a, b, c, res);
 	
 	if (aux) {
 		printf("X1 = %d\nX2 = %d\n", res[0], res[1]);
