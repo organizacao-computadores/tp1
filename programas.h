@@ -21,5 +21,6 @@ RAM *programaFibonacci(CPU *cpu, RAM *ram,int n);
 int programaTermoPA(CPU *cpu, int a1, int n, int r);
 int programaSomaTermosPA(CPU *cpu, int a1, int n, int r);
 int programaModulo(CPU *cpu, int a, int b);
+bool programaEhNumeroPrimo(CPU *cpu, int valor);
 
 #endif

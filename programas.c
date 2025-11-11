@@ -644,3 +644,20 @@ int programaModulo(CPU* cpu, int a, int b) {
 
   return result;
 }
+
+bool programaEhNumeroPrimo(CPU *cpu, int valor) {
+  if (valor <= 1)
+    return false;
+
+  if (valor == 2 || valor == 3)
+    return true;
+
+  int raiz = programaRaizAproximada(cpu, valor);
+
+  for (int i = 2; i < raiz; i++) {
+    if (programaModulo(cpu, valor, i) == 0)
+      return false;
+  }
+
+  return true;
+}
