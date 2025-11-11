@@ -110,8 +110,18 @@ void programas(){
 	//fibonacci
 	printf("\nDigite até qual elemento da sequência de fibonacci você deseja: ");
 	scanf("%d", &a);
+
+	ram = criarRAM_vazia(1);
+	programaFibonacci(cpu, ram, a);
+
 	printf("Sequência Fibonacci até %dº elemento:\n", a);
-	programaFibonacci(cpu, a);
+	for(int i = 0; i < a; i++){
+		printf("%d ", getDado(i, ram));
+	}
+
+	printf("\n");
+
+	ram = liberarRAM(ram);
 
 	free(cpu);
 }

@@ -452,47 +452,58 @@ int programaRaizCubicaAroximada(CPU *cpu, int valor) {
   return i - 2;
 }
 
-void programaFibonacci(CPU *cpu, int n) {
-  RAM *ram = criarRAM_vazia(1);
-
-  Instruction **trecho = (Instruction **) malloc(3 * sizeof(Instruction*));
-  int *fib = (int *) malloc(n * sizeof(int));
-  
+RAM *programaFibonacci(CPU *cpu, RAM *ram, int n){
   if (n < 1) {
-    printf("Valor inválido!\n");
-    
-    liberarRAM(ram);
-    free(fib);
+    printf("\nValor inválido!\n");
 
-    return;
-  }
-  else if(n == 1) {
-    printf("0\n");
-
-    liberarRAM(ram);
-    free(fib);
-
-    return;
+    return ram;
   }
 
-  fib[0] = 0; 
-  fib[1] = 1; 
+  
+  ram = aumentarRam(ram, n);
+
+  if(n == 1) {
+    Instruction **trecho = (Instruction **) malloc(3 * sizeof(Instruction*));
+    trecho[0] = setInstruction(1, 0, -1, 4);
+    trecho[1] = setInstruction(1, 0, -1, 5);
+    trecho[2] = setInstruction(-1, -1, -1, -1);
+
+    setPrograma(cpu, trecho, 3);
+    iniciar(cpu, ram);
+    destroiPrograma(cpu, 3);
+
+    trecho = destroiTrecho(trecho, 3);
+
+    return ram;
+  }
+
+  Instruction **trecho1 = (Instruction **) malloc(5 * sizeof(Instruction*));
+
+  trecho1[0] = setInstruction(1, 0, -1, 4);
+  trecho1[1] = setInstruction(2, 1, -1, 4);
+  trecho1[2] = setInstruction(1, 0, -1, 5);
+  trecho1[3] = setInstruction(2, 1, -1, 5);
+  trecho1[4] = setInstruction(-1, -1, -1, -1);
+
+  setPrograma(cpu, trecho1, 5);
+  iniciar(cpu, ram);
+  destroiPrograma(cpu, 5); 
+
+  trecho1 = destroiTrecho(trecho1, 5);
+
+  Instruction **trecho2 = (Instruction **) malloc(2 * sizeof(Instruction*));
+
   for (int i = 2; i < n; i++) {
-    fib[i] = fib[i-1] + fib[i-2];
+    trecho2[0] = setInstruction(i-1, i-2, i, 0);
+    trecho2[1] = setInstruction(-1, -1, -1, -1);
 
-    trecho[0] = setInstruction(1, fib[i], -1, 4); // reg1 recebe fib[i]
-    trecho[1] = setInstruction(1, 0, -1, 5); // ram[0] recebe o valor do reg1
-    trecho[2] = setInstruction(-1, -1, -1, -1); // halt
-
-    setPrograma(cpu, trecho, 3); // envia as instruções para a cpu
+    setPrograma(cpu, trecho2, 2); // envia as instruções para a cpu
     iniciar(cpu, ram); // executa as instruções na cpu
-    destroiPrograma(cpu, 3); // free no programa criado 
+    destroiPrograma(cpu, 2); // free no programa criado 
   }
 
-  for (int i = 0 ; i<n ; i++) {
-    if (i == n-1)
-      printf("%d\n", fib[i]);
-    else
-      printf("%d - ", fib[i]);
-  }
+  trecho2 = destroiTrecho(trecho2, 2);
+
+  return ram;
+
 }
