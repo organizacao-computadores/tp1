@@ -340,17 +340,17 @@ int programaBhaskara(CPU *cpu, int a, int b, int c, int *res) {
     
     trecho[0] = setInstruction(1, x2, -1, 4); // envia res para o registrador 1
     trecho[1] = setInstruction(1, 1, -1, 5); // passa valor do registrador 2 (x2) para a ram[1]
-    trecho[2] = setInstruction(-1, -1, -1, -1); // haut
+    trecho[2] = setInstruction(-1, -1, -1, -1); // halt
 
     setPrograma(cpu, trecho, 3); // envia as instruções para a cpu
     iniciar(cpu, ram); // executa as instruções na cpu
     destroiPrograma(cpu, 3); // free no programa criado   
 
-    // liberando memorias alocadas
+    // libera memorias alocadas
     trecho = destroiTrecho(trecho, 3);
     liberarRAM(ram);
 
-    // atualizando vetor de resultados
+    // atualiza vetor de resultados
     res[0] = x1;
     res[1] = x2;
     
@@ -450,4 +450,49 @@ int programaRaizCubicaAroximada(CPU *cpu, int valor) {
   liberarRAM(ram);
 
   return i - 2;
+}
+
+void programaFibonacci(CPU *cpu, int n) {
+  RAM *ram = criarRAM_vazia(1);
+
+  Instruction **trecho = (Instruction **) malloc(3 * sizeof(Instruction*));
+  int *fib = (int *) malloc(n * sizeof(int));
+  
+  if (n < 1) {
+    printf("Valor inválido!\n");
+    
+    liberarRAM(ram);
+    free(fib);
+
+    return;
+  }
+  else if(n == 1) {
+    printf("0\n");
+
+    liberarRAM(ram);
+    free(fib);
+
+    return;
+  }
+
+  fib[0] = 0; 
+  fib[1] = 1; 
+  for (int i = 2; i < n; i++) {
+    fib[i] = fib[i-1] + fib[i-2];
+
+    trecho[0] = setInstruction(1, fib[i], -1, 4); // reg1 recebe fib[i]
+    trecho[1] = setInstruction(1, 0, -1, 5); // ram[0] recebe o valor do reg1
+    trecho[2] = setInstruction(-1, -1, -1, -1); // halt
+
+    setPrograma(cpu, trecho, 3); // envia as instruções para a cpu
+    iniciar(cpu, ram); // executa as instruções na cpu
+    destroiPrograma(cpu, 3); // free no programa criado 
+  }
+
+  for (int i = 0 ; i<n ; i++) {
+    if (i == n-1)
+      printf("%d\n", fib[i]);
+    else
+      printf("%d - ", fib[i]);
+  }
 }

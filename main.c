@@ -19,9 +19,7 @@ int main() {
 	RAM *ram = criarRAM_aleatoria(n);
 	printf("\nRam aleatoria gerada: \n");
 	imprimir(ram);
-
 	liberarRAM(ram);
-
 	programas();
 
 }
@@ -35,22 +33,22 @@ void programas(){
 	cpu = criarCPU();
 
 	//multiplicação
-	printf("\nInsira dois valores para multiplicação: \n");
+	printf("\nInsira dois valores para multiplicação: ");
 	scanf("%d%d", &a, &b);
-	printf("\n%d x %d = %d\n", a, b, programaMulti(cpu, a, b));
+	printf("%d x %d = %d\n", a, b, programaMulti(cpu, a, b));
 
 	//divisão
-	printf("\nInsira dois valores para divisão: \n");
+	printf("\nInsira dois valores para divisão: ");
 	scanf("%d%d", &a, &b);
-	printf("\n%d / %d = %d\n", a, b, programaDiv(cpu, a, b));
+	printf("%d / %d = %d\n", a, b, programaDiv(cpu, a, b));
 
 	//raiz quadrada
-	printf("\nInsira um valor para calcular sua raiz quadrada aproximada: \n");
+	printf("\nInsira um valor para calcular sua raiz quadrada aproximada: ");
 	scanf("%d", &a);
-	printf("\nRaiz quadrada de %d = %d\n", a, programaRaizAproximada(cpu, a));
+	printf("Raiz quadrada de %d = %d\n", a, programaRaizAproximada(cpu, a));
 
 	int n1, m1, n2, m2;
-	printf("\nInsira n e m para criar uma matriz: \n");
+	printf("\nInsira n e m para criar uma matriz: ");
 	scanf("%d%d", &n1, &m1);
 
 	RAM *ram = NULL;
@@ -58,7 +56,7 @@ void programas(){
 	ram = programaPreencheMatriz(cpu, ram, 0, n1, m1);
 	int tamM1 = getTamanho(ram);
 
-	printf("\nResultado da matriz preenchida:\n");
+	printf("Resultado da matriz preenchida:\n");
 	imprimir(ram);
 
 	printf("\nInsira n e m para criar outra matriz: \n");
@@ -75,13 +73,12 @@ void programas(){
 	printf("\nMatriz1 X Matriz2:\n");
 	ram = programaMultiplicaMatriz(cpu, ram, n1, m1, n2, m2);
 
-
 	ram = liberarRAM(ram);
 
 	//fatorial
 	printf("\nDigite um valor para calcular seu fatorial: ");
 	scanf("%d", &a);
-	printf("\nFatorial de %d = %d\n", a, programaFatorial(cpu, a));
+	printf("Fatorial de %d = %d\n", a, programaFatorial(cpu, a));
 
 	//formula de bhaskara
 	printf("\nDigite a, b e c para calcular a fórmula de bháskara: ");
@@ -89,23 +86,32 @@ void programas(){
 	int aux = programaBhaskara(cpu, a, b, c, res);
 	
 	if (aux) {
-		printf("\nX1 = %d\nX2 = %d\n", res[0], res[1]);
+		printf("X1 = %d\nX2 = %d\n", res[0], res[1]);
 	}
 	else {
-		printf("\nDelta negativo! Sem raízes reais!\n");
+		printf("Delta negativo! Sem raízes reais!\n");
 	}
 
+	//exponenciação
 	printf("\nDigite base e expoente para calcular exponenciação: ");
 	scanf("%d%d", &a, &b);
-	printf("\n%d ^ %d = %d\n", a, b, programaExponencial(cpu, a, b));
+	printf("%d ^ %d = %d\n", a, b, programaExponencial(cpu, a, b));
 
+	//logaritmo
 	printf("\nDigite base e logaritmando para calcular: ");
 	scanf("%d%d", &a, &b);
-	printf("\nlog(%d, %d) = %d\n", a, b, programaLog(cpu, a, b));
+	printf("log(%d, %d) = %d\n", a, b, programaLog(cpu, a, b));
 
+	//raiz cubica
 	printf("\nInsira um valor para calcular sua raiz cubica aproximada: ");
 	scanf("%d", &a);
-	printf("\nRaiz cubica de %d = %d\n", a, programaRaizCubicaAroximada(cpu, a));
+	printf("Raiz cubica de %d = %d\n", a, programaRaizCubicaAroximada(cpu, a));
+
+	//fibonacci
+	printf("\nDigite até qual elemento da sequência de fibonacci você deseja: ");
+	scanf("%d", &a);
+	printf("Sequência Fibonacci até %dº elemento:\n", a);
+	programaFibonacci(cpu, a);
 
 	free(cpu);
 }
