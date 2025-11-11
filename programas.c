@@ -447,7 +447,57 @@ int programaRaizCubicaAroximada(CPU *cpu, int valor) {
   }
 
   trecho = destroiTrecho(trecho, 3);
-  liberarRAM(ram);
+  ram = liberarRAM(ram);
 
   return i - 2;
+}
+
+// formula pa: an = a1 + (n - 1) * r 
+int programaTermoPA(CPU *cpu, int a1, int n, int r) { // calcula o n-esimo termo
+  RAM *ram = criarRAM_vazia(4);
+  Instruction **trecho = (Instruction **)malloc(6 * sizeof(Instruction *));
+
+  trecho[0] = setInstruction(1, n, -1, 4); // reg1 <- n
+  trecho[1] = setInstruction(1, 0, -1, 5); // ram[0] <- reg1
+  trecho[2] = setInstruction(2, 1, -1, 4); // reg2 <- 1;
+  trecho[3] = setInstruction(2, 1, -1, 5); // ram[1] recebe reg2
+  trecho[4] = setInstruction(0, 1, 0, 1);  // salva o resultado de n - 1 na ram[0];
+  trecho[5] = setInstruction(-1, -1, -1, -1); // halt
+
+  setPrograma(cpu, trecho, 6);
+  iniciar(cpu, ram);
+  destroiPrograma(cpu, 6);
+
+  trecho = destroiTrecho(trecho, 6);
+
+  Instruction **trecho2 = (Instruction **) malloc(3 * sizeof(Instruction *));
+  trecho2[0] = setInstruction(1, r, -1, 4); // reg1 <- r
+  trecho2[1] = setInstruction(1, 1, -1, 5); // ram[1] recebe reg1
+  trecho2[2] = setInstruction(-1, -1, -1, -1);
+
+  setPrograma(cpu, trecho2, 3);
+  iniciar(cpu, ram);
+  destroiPrograma(cpu, 3);
+
+  trecho2 = destroiTrecho(trecho2, 3);
+
+  int aux = programaMulti(cpu, getDado(0, ram), getDado(1, ram));
+
+  Instruction **trecho3 = (Instruction **)malloc(6 * sizeof(Instruction *));
+  trecho3[0] = setInstruction(1, a1, -1, 4); // reg1 <- a1
+  trecho3[1] = setInstruction(1, 0, -1, 5);  // ram[0] recebe reg1;
+  trecho3[2] = setInstruction(2, aux, -1, 4); // reg2 recebe aux;
+  trecho3[3] = setInstruction(2, 1, -1, 5);   // ram[1] recebe reg2;
+  trecho3[4] = setInstruction(0, 1, 2, 0);
+  trecho3[5] = setInstruction(-1, -1, -1, -1);
+
+  setPrograma(cpu, trecho3, 6);
+  iniciar(cpu, ram);
+  destroiPrograma(cpu, 6);
+  trecho3 = destroiTrecho(trecho3, 6);
+
+  int result = getDado(2, ram);
+
+  ram = liberarRAM(ram);
+  return result;
 }
