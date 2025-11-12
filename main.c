@@ -22,6 +22,7 @@ int main() {
 	liberarRAM(ram);
 	programas();
 
+	return 0;
 }
 
 void programas(){
