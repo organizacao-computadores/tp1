@@ -199,7 +199,7 @@ RAM *programaPreencheMatriz(CPU *cpu, RAM *ram, int pontoDePartida,int n, int m)
   for(int i = 0; i < n; i++){
     for(int j = 0; j < m; j++){
       endereco = encontrarPosicaoMatriz(cpu, pontoDePartida, n, m, i, j);
-      printf("\nInsira o valor da matriz[%d][%d]: ", i, j);
+      printf("Insira o valor da matriz[%d][%d]: ", i, j);
       scanf("%d", &temp);
 
       trecho[0] = setInstruction(1, temp, -1, 4);
@@ -212,6 +212,7 @@ RAM *programaPreencheMatriz(CPU *cpu, RAM *ram, int pontoDePartida,int n, int m)
     }
   }
 
+  printf("\nMatriz digitada:\n");
   imprimirMatriz(cpu, ram, pontoDePartida, n, m);
 
   trecho = destroiTrecho(trecho, 3);
@@ -722,7 +723,7 @@ int programaMdc(CPU *cpu, int a, int b){
   
 }
 
-bool ehPar(CPU *cpu, int a) {
+bool programaEhPar(CPU *cpu, int a) {
   // calcula módulo da divisão de a por 2
   int res = programaModulo(cpu, a, 2);
 

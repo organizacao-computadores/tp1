@@ -19,7 +19,7 @@ int programaMdc(CPU *cpu, int a, int b);
 int programaMmc(CPU *cpu, int a, int b);
 int programaBhaskara(CPU *cpu, int a, int b, int c, int *res);
 bool programaEhNumeroPrimo(CPU *cpu, int valor);
-bool ehPar(CPU *cpu, int a);
+bool programaEhPar(CPU *cpu, int a);
 
 
 RAM *programaPreencheMatriz(CPU *cpu, RAM *ram, int pontoDePartida, int n, int m);

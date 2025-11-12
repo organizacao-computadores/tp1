@@ -59,7 +59,8 @@ int getTamanho(RAM *ram){
 void imprimir(RAM *ram) {
 	printf("Conteúdo da RAM: \n");
 	for (int i = 0; i < ram->tamanho; i++)
-		printf("%d, ", ram->memoria[i]);
+		printf("%d ", ram->memoria[i]);
+	
 	printf("\n");
 }
 
