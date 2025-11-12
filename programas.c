@@ -157,13 +157,12 @@ int programaRaizAproximada(CPU *cpu, int valor) {
   Instruction **trecho = (Instruction **) malloc(3 * sizeof(Instruction *));
   
   // multiplica i^2 até o resultado ser maior ou igual que o valor digitado
-  int aux = 0;
+
   int i = 1;
 
-  while (aux <= valor) {
-    aux = programaMulti(cpu, i, i);
+  while (getDado(0, ram) <= valor) {
     
-    trecho[0] = setInstruction(1, aux, -1, 4); // envia aux para o registrador 1
+    trecho[0] = setInstruction(1, programaMulti(cpu, i, i), -1, 4); // envia i*i para o registrador 1
     trecho[1] = setInstruction(1, 0, -1, 5); // passa valor do registrador 1 (aux) para a ram[0]
     trecho[2] = setInstruction(-1, -1, -1, -1); // halt
 
@@ -286,27 +285,40 @@ int programaFatorial(CPU *cpu, int valor) {
   RAM *ram = criarRAM_vazia(2);
 
   //cria um vetor de instruções
-  Instruction **trecho = (Instruction **) malloc(3 * sizeof(Instruction *));
+  Instruction **trecho1 = (Instruction **) malloc(3 * sizeof(Instruction *));
 
-  //multiplica todos os valores de 'valor' até '2'
-  int aux = valor;
-  for (int i = valor-1; i > 1; i--) {
-    aux = programaMulti(cpu, aux, i);
+    trecho1[0] = setInstruction(1, valor, -1, 4); // envia res para o registrador 1
+    trecho1[1] = setInstruction(1, 0, -1, 5); // passa valor do registrador 1 (aux) para a ram[0]
+    trecho1[2] = setInstruction(-1, -1, -1, -1); // halt
 
-    trecho[0] = setInstruction(1, aux, -1, 4); // envia res para o registrador 1
-    trecho[1] = setInstruction(1, 0, -1, 5); // passa valor do registrador 1 (aux) para a ram[0]
-    trecho[2] = setInstruction(-1, -1, -1, -1); // haut
-
-    setPrograma(cpu, trecho, 3); // envia as instruções para a cpu
+    setPrograma(cpu, trecho1, 3); // envia as instruções para a cpu
     iniciar(cpu, ram); // executa as instruções na cpu
-    destroiPrograma(cpu, 3); // free no programa criado    
+    destroiPrograma(cpu, 3); // free no programa criado 
+
+    trecho1 = destroiTrecho(trecho1, 3);
+
+  Instruction **trecho2 = (Instruction **) malloc(3 * sizeof(Instruction *));
+  int aux;
+  for (int i = valor-1; i > 1; i--) {
+    aux = programaMulti(cpu, getDado(0, ram), i);
+
+    trecho2[0] = setInstruction(1, aux, -1, 4);
+    trecho2[1] = setInstruction(1, 0, -1, 5);
+    trecho2[2] = setInstruction(-1, -1, -1, -1);
+
+      setPrograma(cpu, trecho2, 3); // envia as instruções para a cpu
+    iniciar(cpu, ram); // executa as instruções na cpu
+    destroiPrograma(cpu, 3); // free no programa criado 
+   
   }
+
+  int result = getDado(0, ram);
 
   // free nas memórias alocadas
   liberarRAM(ram);
-  destroiTrecho(trecho, 3);
+  trecho2 = destroiTrecho(trecho2, 3);
 
-  return aux;
+  return result;
 }
 
 int programaBhaskara(CPU *cpu, int a, int b, int c, int *res) {
