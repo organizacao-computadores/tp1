@@ -137,14 +137,25 @@ void programas(){
 	printf("\nO módulo de A/B = %d\n", programaModulo(cpu, a, b));
 
 	// numero primo
-	int val;
-	printf("Insira um número para verificar se ele é primo: ");
-	scanf("%d", &val);
-	if (programaEhNumeroPrimo(cpu, val))
-		printf("\nO número %d é primo.\n", val);
-	else
-		printf("\nO número %d não é primo.\n", val);
+	printf("\nInsira um número para verificar se ele é primo: ");
+	scanf("%d", &a);
+	printf("O número %d %sé primo\n", a, programaEhNumeroPrimo(cpu, a) ? "" : "não " );
 
+	// mdc
+	printf("\nInsira dois valores para o cálculo do MDC: ");
+	scanf("%d%d", &a, &b);
+	printf("MDC entre %d e %d = %d\n", a, b, programaMdc(cpu, a, b));
+	
+	// mmc
+	printf("\nInsira dois valores para o cálculo do MMC: ");
+	scanf("%d%d", &a, &b);
+	printf("MMC entre %d e %d = %d\n", a, b, programaMmc(cpu, a, b));
+	
+	// eh par
+	printf("\nInsira um valor para verificar se é par: ");
+	scanf("%d", &a);
+	printf("%d é par? %s", a, ehPar(cpu, a) ? "Sim\n" : "Não\n" );
+	
 	ram = liberarRAM(ram);
 
 	free(cpu);

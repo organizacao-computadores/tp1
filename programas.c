@@ -673,3 +673,66 @@ bool programaEhNumeroPrimo(CPU *cpu, int valor) {
 
   return true;
 }
+
+int programaMdc(CPU *cpu, int a, int b){
+
+  RAM *ram = criarRAM_vazia(3);
+  
+  Instruction **trecho1 = (Instruction **) malloc(5 * sizeof(Instruction *));
+  trecho1[0] = setInstruction(1, a, -1, 4); //reg1 <- a
+  trecho1[1] = setInstruction(2, b, -1, 4); //reg2 <- b
+  trecho1[2] = setInstruction(1, 0, -1, 5); //ram[0] <- reg1 (a)
+  trecho1[3] = setInstruction(2, 1, -1, 5); //ram[1] <- reg2 (b)
+  trecho1[4] = setInstruction(-1, -1, -1, -1); //halt
+
+  setPrograma(cpu, trecho1, 5);
+  iniciar(cpu, ram);
+  destroiPrograma(cpu, 5);
+  
+  trecho1 = destroiTrecho(trecho1, 5);
+
+  Instruction **trecho2 = (Instruction **) malloc(7 * sizeof(Instruction *));
+  int resto;
+  
+  while(getDado(1, ram) != 0){
+  //(r)                            // (a)               //(b)
+    resto = programaModulo(cpu, getDado(0, ram), getDado(1, ram));
+    
+    trecho2[0] = setInstruction(1, 0, -1, 3); //reg1 <- ram[0](a)
+    trecho2[1] = setInstruction(1, 2, -1, 5); //ram[2] <- reg1
+    trecho2[2] = setInstruction(1, 1, -1, 3); //reg1 <- ram[1](b)
+    trecho2[3] = setInstruction(1, 0, -1, 5); //ram[0] <- reg1(b)
+    trecho2[4] = setInstruction(2, resto, -1, 4); //reg2 <- (r)
+    trecho2[5] = setInstruction(2, 1, -1, 5); //ram[1] <- reg2(r)
+    trecho2[6] = setInstruction(-1, -1, -1, -1); //halt
+
+    setPrograma(cpu, trecho2, 7);
+    iniciar(cpu, ram);
+    destroiPrograma(cpu, 7);
+
+  }
+
+  trecho2 = destroiTrecho(trecho2, 7);
+
+  int result = getDado(0, ram);
+
+  ram = liberarRAM(ram);
+
+  return result;
+  
+}
+
+bool ehPar(CPU *cpu, int a) {
+  // calcula módulo da divisão de a por 2
+  int res = programaModulo(cpu, a, 2);
+
+  // se modulo da divisão por 2 == 0 -> é par (true)
+  if (!res) return true;
+  // se não -> é ímpar (false)
+  else return false;
+}
+
+int programaMmc(CPU *cpu, int a, int b) {
+  // Calcular o MMC usando a fórmula: MMC(a, b) = (a * b) / MDC(a, b)
+  return programaDiv(cpu, programaMulti(cpu, a, b), programaMdc(cpu, a, b));
+}
