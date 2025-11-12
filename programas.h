@@ -1,6 +1,8 @@
 #ifndef PROGRAMAS_H
 #define PROGRAMAS_H
 
+#include<stdbool.h>
+
 #include "ram.h"
 #include "cpu.h"
 #include "instrucao.h"
