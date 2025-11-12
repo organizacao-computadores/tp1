@@ -12,14 +12,6 @@ void programas();
 int main() {
 	srand(time(NULL));
 
-	int n;
-	printf("Insira o tamanho da memória: ");
-	scanf("%d", &n);
-
-	RAM *ram = criarRAM_aleatoria(n);
-	printf("\nRam aleatoria gerada: \n");
-	imprimir(ram);
-	liberarRAM(ram);
 	programas();
 
 	return 0;
@@ -28,38 +20,36 @@ int main() {
 void programas(){
 	RAM *ram = NULL;
 	CPU *cpu;
-	int a, b, c;
+	int a, b, c, n;
 	int res[2];
 
 	cpu = criarCPU();
 	int op;
 
 	while (true) {
-		printf("\nPressione enter...");
-		getchar();
-		getchar();
-		
+
 		// imprimindo menu
 		system("clear");
 		printf("======================= PROGRAMAS IMPLEMENTADOS =======================\n");
 		printf(" 0 - Encerrar Programa\n");
-		printf(" 1 - Multiplicação\n");
-		printf(" 2 - Divisão Inteira\n");
-		printf(" 3 - Módulo\n");
-		printf(" 4 - É Par?\n");
-		printf(" 5 - É Primo?\n");
-		printf(" 6 - Raíz Quadrada Aproximada\n");
-		printf(" 7 - Raíz Cúbica Aproximada\n");
-		printf(" 8 - Fatorial\n");
-		printf(" 9 - Exponenciação\n");
-		printf("10 - Logaritmo\n");
-		printf("11 - MDC\n");
-		printf("12 - MMC\n");
-		printf("13 - Bhaskara\n");
-		printf("14 - Fibonacci\n");
-		printf("15 - N-esimo termo da PA\n");
-		printf("16 - Soma dos Termos da PA\n");
-		printf("17 - Multiplicação de Matrizes\n");
+		printf(" 1 - Ram Aleatória\n");
+		printf(" 2 - Multiplicação\n");
+		printf(" 3 - Divisão Inteira\n");
+		printf(" 4 - Módulo\n");
+		printf(" 5 - É Par?\n");
+		printf(" 6 - É Primo?\n");
+		printf(" 7 - Raíz Quadrada Aproximada\n");
+		printf(" 8 - Raíz Cúbica Aproximada\n");
+		printf(" 9 - Fatorial\n");
+		printf("10 - Exponenciação\n");
+		printf("11 - Logaritmo\n");
+		printf("12 - MDC\n");
+		printf("13 - MMC\n");
+		printf("14 - Bhaskara\n");
+		printf("15 - Fibonacci\n");
+		printf("16 - N-esimo termo da PA\n");
+		printf("17 - Soma dos Termos da PA\n");
+		printf("18 - Multiplicação de Matrizes\n");
 		printf("=====================================================================");
 
 		printf("\nSelecione o código da operação a ser realizada: ");
@@ -71,9 +61,15 @@ void programas(){
 			case 0:
 				printf("\nPrograma encerrado!!!\n");
 				break;
-			
-			//mult
 			case 1:
+				printf("Insira o tamanho da memória: ");
+				scanf("%d", &n);
+				ram =	criarRAM_aleatoria(n);
+				printf("\nRam aleatoria gerada: \n");
+				imprimir(ram);
+				break;
+			//mult
+			case 2:
 				printf("\nInsira dois valores para multiplicação: ");
 				scanf("%d%d", &a, &b);
 				printf("%d x %d = %d\n", a, b, programaMulti(cpu, a, b));
@@ -81,7 +77,7 @@ void programas(){
 				break;
 				
 			//div
-			case 2:
+			case 3:
 				printf("\nInsira dois valores para divisão inteira: ");
 				scanf("%d%d", &a, &b);
 				printf("%d / %d = %d\n", a, b, programaDiv(cpu, a, b));
@@ -89,7 +85,7 @@ void programas(){
 				break;
 				
 			//mod	
-			case 3:
+			case 4:
 				printf("\nInsira A e B para obter o módulo entre eles: ");
 				scanf("%d %d", &a, &b);
 				printf("\nO módulo de A/B = %d\n", programaModulo(cpu, a, b));
@@ -97,7 +93,7 @@ void programas(){
 				break;
 				
 			//par
-			case 4:
+			case 5:
 				printf("\nInsira um valor para verificar se é par: ");
 				scanf("%d", &a);
 				printf("%d %sé par", a, programaEhPar(cpu, a) ? "" : "não " );
@@ -105,7 +101,7 @@ void programas(){
 				break;
 				
 			//primo
-			case 5:
+			case 6:
 				printf("\nInsira um número para verificar se ele é primo: ");
 				scanf("%d", &a);
 				printf("O número %d %sé primo\n", a, programaEhNumeroPrimo(cpu, a) ? "" : "não " );
@@ -113,7 +109,7 @@ void programas(){
 				break;
 				
 			//raiz quadr
-			case 6:
+			case 7:
 				printf("\nInsira um valor para calcular sua raiz quadrada aproximada: ");
 				scanf("%d", &a);
 				printf("Raiz quadrada de %d = %d\n", a, programaRaizAproximada(cpu, a));
@@ -121,7 +117,7 @@ void programas(){
 				break;
 				
 			//raiz cub
-			case 7:
+			case 8:
 				printf("\nInsira um valor para calcular sua raiz cubica aproximada: ");
 				scanf("%d", &a);
 				printf("Raiz cubica de %d = %d\n", a, programaRaizCubicaAroximada(cpu, a));
@@ -129,7 +125,7 @@ void programas(){
 				break;
 				
 			//fat
-			case 8:
+			case 9:
 				printf("\nDigite um valor para calcular seu fatorial: ");
 				scanf("%d", &a);
 				printf("Fatorial de %d = %d\n", a, programaFatorial(cpu, a));
@@ -137,7 +133,7 @@ void programas(){
 				break;
 				
 			//exp
-			case 9:
+			case 10:
 				printf("\nDigite base e expoente para calcular exponenciação: ");
 				scanf("%d%d", &a, &b);
 				printf("%d ^ %d = %d\n", a, b, programaExponencial(cpu, a, b));
@@ -145,7 +141,7 @@ void programas(){
 				break;
 				
 			//log
-			case 10:
+			case 11:
 				printf("\nDigite base e logaritmando: ");
 				scanf("%d%d", &a, &b);
 				printf("log(%d, %d) = %d\n", a, b, programaLog(cpu, a, b));
@@ -153,7 +149,7 @@ void programas(){
 				break;
 			
 			//mdc
-			case 11:
+			case 12:
 				printf("\nInsira dois valores para o cálculo do MDC: ");
 				scanf("%d%d", &a, &b);
 				printf("MDC entre %d e %d = %d\n", a, b, programaMdc(cpu, a, b));
@@ -161,7 +157,7 @@ void programas(){
 				break;
 				
 			//mmc
-			case 12:
+			case 13:
 				printf("\nInsira dois valores para o cálculo do MMC: ");
 				scanf("%d%d", &a, &b);
 				printf("MMC entre %d e %d = %d\n", a, b, programaMmc(cpu, a, b));
@@ -169,7 +165,7 @@ void programas(){
 				break;
 				
 			//bhaskara
-			case 13:
+			case 14:
 				printf("\nDigite a, b e c para calcular a fórmula de bháskara: ");
 				scanf("%d%d%d", &a, &b, &c);
 				int aux = programaBhaskara(cpu, a, b, c, res);
@@ -184,7 +180,7 @@ void programas(){
 				break;
 				
 			//fibonacci
-			case 14:
+			case 15:
 				printf("\nDigite até qual elemento da sequência de fibonacci você deseja: ");
 				scanf("%d", &a);
 
@@ -200,7 +196,7 @@ void programas(){
 				break;
 				
 			//n termo da pa
-			case 15:
+			case 16:
 				int a1, n, r;
 				printf("\nInsira a1, n e r para calcular o n-ésimo termo da PA: ");
 				scanf("%d %d %d", &a1, &n, &r);
@@ -209,7 +205,7 @@ void programas(){
 				break;
 				
 			//soma da pa
-			case 16:
+			case 17:
 				printf("\nInsira a1, n e r para calcular a soma dos termos da PA: ");
 				scanf("%d %d %d", &a1, &n, &r);
 				printf("\nSoma dos termos = %d\n", programaSomaTermosPA(cpu, a1, n, r));
@@ -217,7 +213,7 @@ void programas(){
 				break;
 				
 			//mult de mat
-			case 17:
+			case 18:
 				int n1, m1, n2, m2;
 				printf("\nInsira n e m para criar a primeira matriz: ");
 				scanf("%d%d", &n1, &m1);
@@ -248,6 +244,10 @@ void programas(){
 		}
 
 		if (!op) break;
+
+		printf("\nPressione enter...");
+		getchar();
+		getchar();
 	}
 	
 	
