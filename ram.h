@@ -13,5 +13,6 @@ void setDado(int endereco, int conteudo, RAM *ram);
 int getDado(int endereco, RAM *ram);
 int getTamanho(RAM *ram);
 void imprimir(RAM *ram);
+RAM *zerarRAM(RAM *ram, int pontoDeInicio, int final);
 
 #endif

@@ -22,13 +22,13 @@ RAM* criarRAM(int tamanho) {
 
 RAM* criarRAM_vazia(int tamanho) {
 	RAM *ram = criarRAM(tamanho);
-	for (int i = 0; i < tamanho; i++)
-		ram->memoria[i] = 0;
+	ram = zerarRAM(ram, 0, tamanho-1);
 
 	return ram;
 }
 
 RAM* criarRAM_aleatoria(int tamanho) {
+	
 	RAM *ram = criarRAM(tamanho);
 	for (int i = 0; i < tamanho; i++) 
 		ram->memoria[i] = rand() % RAND_MAX;
@@ -78,5 +78,16 @@ RAM *aumentarRam(RAM *ram, int novoTamanho){
 		ram->tamanho = novoTamanho;
 	}
 
+	return ram;
+}
+
+RAM *zerarRAM(RAM *ram, int pontoDeInicio, int final){
+	if(final >= ram->tamanho || pontoDeInicio < 0){
+		printf("\nImpossível acessar ram no trecho dado\n");
+		return ram;
+	}
+	for(int i = pontoDeInicio; i <= final; i++){
+		setDado(i, 0, ram);
+	}
 	return ram;
 }

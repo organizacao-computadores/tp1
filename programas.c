@@ -4,12 +4,12 @@
 
 #include "programas.h"
 
-int encontrarPosicaoMatriz(CPU *cpu, int posInicial, int nLinhas, int mColunas, int i, int j);
+int encontrarPosicaoMatriz(CPU *cpu, RAM *ram, int posInicialRAM, int posInicial, int nLinhas, int mColunas, int i, int j);
 
 
-int programaMulti(CPU *cpu, int a, int b){
+int programaMulti(CPU *cpu, RAM *ram, int posInicial, int a, int b){
   int result;
-  RAM *ram = criarRAM_vazia(2);
+
   Instruction **trecho1;
   trecho1 = (Instruction**) malloc(3 * sizeof(Instruction*));
 
@@ -26,7 +26,7 @@ int programaMulti(CPU *cpu, int a, int b){
   } 
 
   trecho1[0] = setInstruction(1, a, -1, 4); //reg1 <- a
-  trecho1[1] = setInstruction(1, 1, -1, 2); //ram[1] <- reg1
+  trecho1[1] = setInstruction(1, posInicial + 1, -1, 2); //ram[posInicial + 1] <- reg1
   trecho1[2] = setInstruction(-1, -1, -1, -1); //halt
 
   setPrograma(cpu, trecho1, 3);
@@ -38,7 +38,7 @@ int programaMulti(CPU *cpu, int a, int b){
   Instruction **trecho2;
   trecho2 = (Instruction**) malloc(2 * sizeof(Instruction*));
   for(int i = 0; i < b; i++){ //ram[0] += ram[1](a); (b) vezes
-    trecho2[0] = setInstruction(0, 1, 0, 0); //reg1 <- ram[0]; reg2 <- ram[1]; reg1 += reg2; ram[0] <- reg1
+    trecho2[0] = setInstruction(posInicial, posInicial + 1, posInicial, 0); //reg1 <- ram[0]; reg2 <- ram[1]; reg1 += reg2; ram[0] <- reg1
     trecho2[1] = setInstruction(-1, -1, -1, -1); //halt
 
     setPrograma(cpu, trecho2, 2);
@@ -48,8 +48,8 @@ int programaMulti(CPU *cpu, int a, int b){
 
   trecho2 = destroiTrecho(trecho2, 2);
 
-  result = getDado(0, ram);
-  ram = liberarRAM(ram);
+  result = getDado(posInicial, ram);
+  ram = zerarRAM(ram, posInicial, posInicial + 1);
 
   if (eraNeg1 && eraNeg2) {
     return result;
@@ -62,8 +62,7 @@ int programaMulti(CPU *cpu, int a, int b){
   }
 }
 
-int programaDiv(CPU *cpu, int dividendo, int divisor){
-  RAM *ram = criarRAM_vazia(5);
+int programaDiv(CPU *cpu, RAM *ram, int posInicial, int dividendo, int divisor){
   
   bool eraNeg1 = false;
   bool eraNeg2 = false;
@@ -80,9 +79,9 @@ int programaDiv(CPU *cpu, int dividendo, int divisor){
 
   Instruction **trecho1 = (Instruction **) malloc(5 * sizeof(Instruction*));
   trecho1[0] = setInstruction(1, dividendo, -1, 4); //reg1 <- dividendo
-  trecho1[1] = setInstruction(1, 0, -1, 2); //ram[0] <- reg1
+  trecho1[1] = setInstruction(1, posInicial, -1, 2); //ram[0] <- reg1
   trecho1[2] = setInstruction(2, divisor, -1, 4); //reg 2 <- divisor
-  trecho1[3] = setInstruction(2, 1, -1, 2); //ram[1] <- reg2
+  trecho1[3] = setInstruction(2, posInicial + 1, -1, 2); //ram[1] <- reg2
   trecho1[4] = setInstruction(-1, -1, -1, -1); //halt
 
   setPrograma(cpu, trecho1, 5);
@@ -93,7 +92,7 @@ int programaDiv(CPU *cpu, int dividendo, int divisor){
 
   Instruction **trecho2 = (Instruction **) malloc(3 * sizeof(Instruction*));
   trecho2[0] = setInstruction(1, 1, -1, 4); //reg1 <- 1
-  trecho2[1] = setInstruction(1, 2, -1, 2); //ram[2] <- reg1
+  trecho2[1] = setInstruction(1, posInicial + 2, -1, 2); //ram[2] <- reg1
   trecho2[2] = setInstruction(-1, -1, -1, -1); //halt
 
   setPrograma(cpu, trecho2, 3);
@@ -104,40 +103,42 @@ int programaDiv(CPU *cpu, int dividendo, int divisor){
   trecho2 = destroiTrecho(trecho2, 3);
 
   Instruction **trecho3 = (Instruction **) malloc(5 * sizeof(Instruction*));
-
+  Instruction **trecho4 = (Instruction **) malloc(5 * sizeof(Instruction*));
+ 
   while(dividendo >= divisor){
 
-    trecho3[0] = setInstruction(0, 1, 0, 1); //reg1 <- ram[0]; reg2 <- ram[1]; reg1 -= reg2; ram[0] <- reg1;
-    trecho3[1] = setInstruction(2, 3, 3, 0); //reg1 <- ram[2]; reg2 <- ram[3]; reg1 += reg2; ram[3] <- reg1;
-    trecho3[2] = setInstruction(1, 0, -1, 3); //reg1 <- ram[0];
-    trecho3[3] = setInstruction(1, 4, -1, 5); //ram[4] <- reg1;
+    trecho3[0] = setInstruction(posInicial, posInicial + 1, posInicial, 1); //reg1 <- ram[0]; reg2 <- ram[1]; reg1 -= reg2; ram[0] <- reg1;
+    trecho3[1] = setInstruction(posInicial + 2, posInicial + 3, posInicial + 3, 0); //reg1 <- ram[2]; reg2 <- ram[3]; reg1 += reg2; ram[3] <- reg1;
+    trecho3[2] = setInstruction(1, posInicial, -1, 3); //reg1 <- ram[0];
+    trecho3[3] = setInstruction(1, posInicial + 4, -1, 5); //ram[4] <- reg1;
     trecho3[4] = setInstruction(-1, -1, -1, -1); //halt
 
     setPrograma(cpu, trecho3, 5);
     iniciar(cpu, ram);
     destroiPrograma(cpu, 5);
 
-    dividendo = getDado(4, ram);
+    dividendo = getDado(posInicial + 4, ram);
 
   }
 
   trecho3 = destroiTrecho(trecho3, 5);
+  trecho4 = destroiTrecho(trecho4, 5);
 
-  Instruction **trecho4 = (Instruction **) malloc(3 * sizeof(Instruction*));
-  trecho4[0] = setInstruction(1, 3, -1, 3); //reg1 <- ram[3]
-  trecho4[1] = setInstruction(1, 4, -1, 5); //ram[4] <- reg1
-  trecho4[2] = setInstruction(-1, -1, -1, -1); //halt
+  Instruction **trecho5 = (Instruction **) malloc(3 * sizeof(Instruction*));
+  trecho5[0] = setInstruction(1, posInicial + 3, -1, 3); //reg1 <- ram[3]
+  trecho5[1] = setInstruction(1, posInicial + 4, -1, 5); //ram[4] <- reg1
+  trecho5[2] = setInstruction(-1, -1, -1, -1); //halt
 
-  setPrograma(cpu, trecho4, 3);
+  setPrograma(cpu, trecho5, 3);
   iniciar(cpu, ram);
   destroiPrograma(cpu, 3);
 
 
-  int result = getDado(4, ram);
+  int result = getDado(posInicial + 4, ram);
 
-  trecho4 = destroiTrecho(trecho4, 3);
+  trecho5 = destroiTrecho(trecho5, 3);
 
-  ram = liberarRAM(ram);
+  ram = zerarRAM(ram, posInicial, posInicial + 4);
 
   if (eraNeg1 && eraNeg2) {
     return result;
@@ -150,8 +151,7 @@ int programaDiv(CPU *cpu, int dividendo, int divisor){
   }
 }
 
-int programaRaizAproximada(CPU *cpu, int valor) {
-  RAM *ram = criarRAM_vazia(1);
+int programaRaizAproximada(CPU *cpu, RAM *ram, int posInicial, int valor) {
 
   //cria um vetor de instruções
   Instruction **trecho = (Instruction **) malloc(3 * sizeof(Instruction *));
@@ -160,10 +160,10 @@ int programaRaizAproximada(CPU *cpu, int valor) {
 
   int i = 1;
 
-  while (getDado(0, ram) <= valor) {
+  while (getDado(posInicial, ram) <= valor) {
     
-    trecho[0] = setInstruction(1, programaMulti(cpu, i, i), -1, 4); // envia i*i para o registrador 1
-    trecho[1] = setInstruction(1, 0, -1, 5); // passa valor do registrador 1 (aux) para a ram[0]
+    trecho[0] = setInstruction(1, programaMulti(cpu, ram, posInicial + 1, i, i), -1, 4); // envia i*i para o registrador 1
+    trecho[1] = setInstruction(1, posInicial, -1, 5); // passa valor do registrador 1 (aux) para a ram[0]
     trecho[2] = setInstruction(-1, -1, -1, -1); // halt
 
     setPrograma(cpu, trecho, 3); // envia as instruções para a cpu
@@ -175,14 +175,15 @@ int programaRaizAproximada(CPU *cpu, int valor) {
 
   // libera memória alocada
   trecho = destroiTrecho(trecho, 3);
-  liberarRAM(ram);
+  ram = zerarRAM(ram, posInicial, posInicial);
 
   return i-2;
 }
 
-int encontrarPosicaoMatriz(CPU *cpu, int posInicial, int nLinhas, int mColunas, int i, int j){
+int encontrarPosicaoMatriz(CPU *cpu, RAM *ram, int posInicialRAM, int posInicial, int nLinhas, int mColunas, int i, int j){
   int endereco;
-  endereco = (posInicial + programaMulti(cpu, i, mColunas) + j);
+  //endereco = (posInicial + programaMulti(cpu, ram, posInicialRAM + 1, i, mColunas) + j);
+  endereco = posInicial + (i * mColunas) + j;
   return endereco;
 }
 
@@ -191,14 +192,14 @@ RAM *criaMatriz(int n, int m, RAM *ram){
   return ram;
 }
 
-RAM *programaPreencheMatriz(CPU *cpu, RAM *ram, int pontoDePartida,int n, int m){
+RAM *programaPreencheMatriz(CPU *cpu, RAM *ram, int posInicial, int pontoDePartida, int n, int m){
   int temp, endereco;
 
   Instruction **trecho = (Instruction **) malloc(3 * sizeof(Instruction*));
 
   for(int i = 0; i < n; i++){
     for(int j = 0; j < m; j++){
-      endereco = encontrarPosicaoMatriz(cpu, pontoDePartida, n, m, i, j);
+      endereco = encontrarPosicaoMatriz(cpu, ram, posInicial, pontoDePartida, n, m, i, j);
       printf("Insira o valor da matriz[%d][%d]: ", i, j);
       scanf("%d", &temp);
 
@@ -213,68 +214,85 @@ RAM *programaPreencheMatriz(CPU *cpu, RAM *ram, int pontoDePartida,int n, int m)
   }
 
   printf("\nMatriz digitada:\n");
-  imprimirMatriz(cpu, ram, pontoDePartida, n, m);
+  imprimirMatriz(cpu, ram, posInicial, pontoDePartida, n, m);
 
   trecho = destroiTrecho(trecho, 3);
 
   return ram;
 }
 
-RAM *programaMultiplicaMatriz(CPU *cpu, RAM *ram, int n1, int m1, int n2, int m2){
-  int addResult, addM1, addM2, tempMult, tamanhoM1, tamanhoM2;
+RAM *programaMultiplicaMatriz(CPU *cpu, RAM *ram, int posInicialRAM, int posInicialMatriz, int n1, int m1, int n2, int m2){
+  int addResult, addM1, addM2, tempMult, tamanhoM1, tamanhoM2, tamanhoM3;
 
   if (m2 != n1) {
     printf("Erro: número de colunas de A deve ser igual ao número de linhas de B.\n");
     return ram;
   }
 
-  tamanhoM1 = programaMulti(cpu, n1, m1);
-  tamanhoM2 = programaMulti(cpu, n2, m2);
+  tamanhoM1 = programaMulti(cpu, ram, posInicialRAM + 3, n1, m1);
+  tamanhoM2 = programaMulti(cpu, ram, posInicialRAM + 3, n2, m2);
+  tamanhoM3 = programaMulti(cpu, ram, posInicialRAM + 3, n1, m2);
 
-  ram = aumentarRam(ram, getTamanho(ram) + programaMulti(cpu, n1, m2));
+  int baseTemp = posInicialMatriz + tamanhoM1 + tamanhoM2 + tamanhoM3 + 10; //area livre na ram para calculos temporarios
 
-  RAM *tempSoma = criarRAM_vazia(2);
-  Instruction **trecho = (Instruction **) malloc(6 * sizeof(Instruction *));
+
+  //ram = aumentarRam(ram, getTamanho(ram) + programaMulti(cpu, n1, m2));
+
+  //RAM *tempSoma = criarRAM_vazia(2);
+  Instruction **trecho1 = (Instruction **) malloc(6 * sizeof(Instruction *));
+  Instruction **trecho2 = (Instruction **) malloc(3 * sizeof(Instruction *));
 
   for(int i = 0; i < n1; i++){
     for(int j = 0; j < m2; j++){
-      addResult = encontrarPosicaoMatriz(cpu, (tamanhoM1 + tamanhoM2), n1, m2, i, j);
+      addResult = encontrarPosicaoMatriz(cpu, ram, baseTemp, (tamanhoM1 + tamanhoM2), n1, m2, i, j);
+      setDado(addResult, 0, ram);
       for(int k = 0; k < m1; k++){
 
-        addM1 = encontrarPosicaoMatriz(cpu, 0, n1, m1, i, k);
-        addM2 = encontrarPosicaoMatriz(cpu, tamanhoM1, n2, m2, k, j);
+        addM1 = encontrarPosicaoMatriz(cpu, ram, baseTemp, posInicialMatriz, n1, m1, i, k);
+        addM2 = encontrarPosicaoMatriz(cpu, ram, baseTemp, posInicialMatriz + tamanhoM1, n2, m2, k, j);
 
-        tempMult = programaMulti(cpu, getDado(addM1, ram), getDado(addM2, ram));
+        tempMult = programaMulti(cpu, ram, baseTemp, getDado(addM1, ram), getDado(addM2, ram));
 
-        trecho[0] = setInstruction(1, tempMult, -1, 4); //reg1 <- tempMult
-        trecho[1] = setInstruction(1, 0, -1, 5); //tempSoma[0] <- reg1
-        trecho[2] = setInstruction(2, getDado(addResult, ram), -1, 4); //reg2 <- ram[addResult]
-        trecho[3] = setInstruction(2, 1, -1, 5); //tempSoma[1] <- reg2
-        trecho[4] = setInstruction(0, 1, 0, 0); //tempSoma[0] <- tempSoma[0] + tempSoma[1]
-        trecho[5] = setInstruction(-1, -1, -1, -1);
+        trecho1[0] = setInstruction(1, tempMult, -1, 4); //reg1 <- tempMult
+        trecho1[1] = setInstruction(1, posInicialRAM, -1, 5); //tempSoma[0] <- reg1
+        trecho1[2] = setInstruction(2, getDado(addResult, ram), -1, 4); //reg2 <- ram[addResult]
+        trecho1[3] = setInstruction(2, posInicialRAM + 1, -1, 5); //tempSoma[1] <- reg2
+        trecho1[4] = setInstruction(posInicialRAM, posInicialRAM + 1, posInicialRAM, 0); //tempSoma[0] <- tempSoma[0] + tempSoma[1]
+        trecho1[5] = setInstruction(-1, -1, -1, -1);
 
-        setPrograma(cpu, trecho, 6);
-        iniciar(cpu, tempSoma);
+        setPrograma(cpu, trecho1, 6);
+        iniciar(cpu, ram);
         destroiPrograma(cpu, 6);
 
-        setDado(addResult, getDado(0, tempSoma), ram); //ram[addResult] = rempSoma[0]
+        trecho2[0] = setInstruction(1, posInicialRAM, -1, 3); //reg1 <- tempSoma[0]
+        trecho2[1] = setInstruction(1, addResult, -1, 5); //ram[addResult] <- reg1
+        trecho2[2] = setInstruction(-1, -1, -1, -1);
+
+        setPrograma(cpu, trecho2, 3);
+        iniciar(cpu, ram);
+        destroiPrograma(cpu, 3);
+
 
       }
     }
   }
 
-  trecho = destroiTrecho(trecho, 6);
-  tempSoma = liberarRAM(tempSoma);
+  trecho1 = destroiTrecho(trecho1, 6);
+  trecho2 = destroiTrecho(trecho2, 3);
 
-  imprimirMatriz(cpu, ram, (tamanhoM1 + tamanhoM2), n1, m2);
+  
+  imprimirMatriz(cpu, ram, posInicialRAM, (tamanhoM1 + tamanhoM2), n1, m2);
+  ram = zerarRAM(ram, posInicialRAM, posInicialRAM + 3);
+
   return ram;
 }
 
-void imprimirMatriz(CPU *cpu, RAM *ram, int pontoDePartida, int n, int m){
+void imprimirMatriz(CPU *cpu, RAM *ram, int posInicialRAM, int pontoDePartida, int n, int m){
   int endereco;
   for(int i = 0; i < n; i++){
     for(int j = 0; j < m; j++){
-      endereco = encontrarPosicaoMatriz(cpu, pontoDePartida, n, m, i, j);
+      endereco = encontrarPosicaoMatriz(cpu, ram, posInicialRAM, pontoDePartida, n, m, i, j);
+      ram = zerarRAM(ram, posInicialRAM, posInicialRAM + 1);
       printf("%d ", getDado(endereco, ram));
     }
     printf("\n");
@@ -282,14 +300,14 @@ void imprimirMatriz(CPU *cpu, RAM *ram, int pontoDePartida, int n, int m){
 }
 
 
-int programaFatorial(CPU *cpu, int valor) {
-  RAM *ram = criarRAM_vazia(2);
+int programaFatorial(CPU *cpu, RAM *ram, int posInicial, int valor) {
+  //RAM *ram = criarRAM_vazia(2);
 
   //cria um vetor de instruções
   Instruction **trecho1 = (Instruction **) malloc(3 * sizeof(Instruction *));
 
     trecho1[0] = setInstruction(1, valor, -1, 4); // envia res para o registrador 1
-    trecho1[1] = setInstruction(1, 0, -1, 5); // passa valor do registrador 1 (aux) para a ram[0]
+    trecho1[1] = setInstruction(1, posInicial, -1, 5); // passa valor do registrador 1 (aux) para a ram[0]
     trecho1[2] = setInstruction(-1, -1, -1, -1); // halt
 
     setPrograma(cpu, trecho1, 3); // envia as instruções para a cpu
@@ -301,117 +319,131 @@ int programaFatorial(CPU *cpu, int valor) {
   Instruction **trecho2 = (Instruction **) malloc(3 * sizeof(Instruction *));
   int aux;
   for (int i = valor-1; i > 1; i--) {
-    aux = programaMulti(cpu, getDado(0, ram), i);
+    aux = programaMulti(cpu, ram,  posInicial + 2, getDado(posInicial, ram), i);
 
     trecho2[0] = setInstruction(1, aux, -1, 4);
-    trecho2[1] = setInstruction(1, 0, -1, 5);
+    trecho2[1] = setInstruction(1, posInicial, -1, 5);
     trecho2[2] = setInstruction(-1, -1, -1, -1);
 
-      setPrograma(cpu, trecho2, 3); // envia as instruções para a cpu
+    setPrograma(cpu, trecho2, 3); // envia as instruções para a cpu
     iniciar(cpu, ram); // executa as instruções na cpu
     destroiPrograma(cpu, 3); // free no programa criado 
    
   }
 
-  int result = getDado(0, ram);
+  int result = getDado(posInicial, ram);
 
   // free nas memórias alocadas
-  liberarRAM(ram);
+  ram = zerarRAM(ram, posInicial, posInicial + 2);
   trecho2 = destroiTrecho(trecho2, 3);
 
   return result;
 }
 
-int programaBhaskara(CPU *cpu, int a, int b, int c, int *res) {
+int programaBhaskara(CPU *cpu, RAM *ram, int posInicial, int a, int b, int c, int res) {
   // criação de RAM temporária
-  RAM *ram = criarRAM_vazia(2);
+  //RAM *ram = criarRAM_vazia(2);
+
+  ram = zerarRAM(ram, res, res + 1);
 
   // cria vetor de instruções
-  Instruction **trecho = (Instruction **) malloc(3 * sizeof(Instruction *));
+  Instruction **trecho = (Instruction **) malloc(5 * sizeof(Instruction *));
 
   
   // calculo de delta
-  int delta = programaMulti(cpu, b, b) - programaMulti(cpu, 4, programaMulti(cpu, a, c));
+  int delta = programaMulti(cpu, ram, posInicial + 2, b, b) - programaMulti(cpu, ram, posInicial + 2, 4, programaMulti(cpu, ram, posInicial + 2, a, c));
 
   if (delta<0) {
     return 0;
   }
   else {
     // calculo de x1
-    int x1 = programaDiv(cpu, (-b + programaRaizAproximada(cpu, delta) ), programaMulti(cpu, 2, a)); 
+    int x1 = programaDiv(cpu, ram, posInicial + 2, (-b + programaRaizAproximada(cpu, ram, posInicial + 2, delta) ), programaMulti(cpu, ram, posInicial + 2, 2, a)); 
 
     trecho[0] = setInstruction(1, x1, -1, 4); // envia res para o registrador 1
-    trecho[1] = setInstruction(1, 0, -1, 5); // passa valor do registrador 1 (x1) para a ram[0]
+    trecho[1] = setInstruction(1, posInicial, -1, 5); // passa valor do registrador 1 (x1) para a ram[0]
     trecho[2] = setInstruction(-1, -1, -1, -1); // halt
     
-    setPrograma(cpu, trecho, 3); // envia as instruções para a cpu
+    setPrograma(cpu, trecho, 5); // envia as instruções para a cpu
     iniciar(cpu, ram); // executa as instruções na cpu
-    destroiPrograma(cpu, 3); // free no programa criado   
+    destroiPrograma(cpu, 5); // free no programa criado   
 
     // calculo de x2
-    int x2 = programaDiv(cpu, (-b - programaRaizAproximada(cpu, delta) ), programaMulti(cpu, 2, a)); 
+    int x2 = programaDiv(cpu, ram, posInicial + 2, (-b - programaRaizAproximada(cpu, ram, posInicial + 2, delta) ), programaMulti(cpu, ram, posInicial + 2, 2, a)); 
     
     trecho[0] = setInstruction(1, x2, -1, 4); // envia res para o registrador 1
-    trecho[1] = setInstruction(1, 1, -1, 5); // passa valor do registrador 2 (x2) para a ram[1]
+    trecho[1] = setInstruction(1, posInicial + 1, -1, 5); // passa valor do registrador 2 (x2) para a ram[1]
     trecho[2] = setInstruction(-1, -1, -1, -1); // halt
 
-    setPrograma(cpu, trecho, 3); // envia as instruções para a cpu
+    setPrograma(cpu, trecho, 5); // envia as instruções para a cpu
     iniciar(cpu, ram); // executa as instruções na cpu
-    destroiPrograma(cpu, 3); // free no programa criado   
+    destroiPrograma(cpu, 5); // free no programa criado   
+
+    //liberarRAM(ram);
+    ram = zerarRAM(ram, posInicial, posInicial + 2);
+    // atualiza vetor de resultados
+    
+    trecho[0] = setInstruction(1, x1, -1, 4);
+    trecho[1] = setInstruction(2, x2, -1, 4);
+    trecho[2] = setInstruction(1, res, -1, 5);
+    trecho[3] = setInstruction(2, res + 1, -1, 5);
+    trecho[4] = setInstruction(-1, -1, -1, -1);
+    
+    setPrograma(cpu, trecho, 5); // envia as instruções para a cpu
+    iniciar(cpu, ram); // executa as instruções na cpu
+    destroiPrograma(cpu, 5); // free no programa criado  
 
     // libera memorias alocadas
-    trecho = destroiTrecho(trecho, 3);
-    liberarRAM(ram);
-
-    // atualiza vetor de resultados
-    res[0] = x1;
-    res[1] = x2;
+    trecho = destroiTrecho(trecho, 5);
     
     return 1;
   }
 }
 
-int programaExponencial(CPU *cpu, int base, int expoente){
+int programaExponencial(CPU *cpu, RAM *ram, int posInicial, int base, int expoente){
   int resultado, tempMult;
 
-  RAM *ram = criarRAM_vazia(2);
+  //RAM *ram = criarRAM_vazia(2);
   Instruction **trecho1 = (Instruction **) malloc(5 * sizeof(Instruction*));
   trecho1[0] = setInstruction(1, 1, -1, 4); //reg1 <- 1
-  trecho1[1] = setInstruction(1, 0, -1, 5); //ram[0] <- reg1
+  trecho1[1] = setInstruction(1, posInicial, -1, 5); //ram[0] <- reg1
   trecho1[2] = setInstruction(2, base, -1, 4); //reg2 <- base
-  trecho1[3] = setInstruction(2, 1, -1, 5); //ram[1] <- reg2
+  trecho1[3] = setInstruction(2, posInicial + 1, -1, 5); //ram[1] <- reg2
   trecho1[4] = setInstruction(-1, -1, -1, -1);
 
   setPrograma(cpu, trecho1, 5);
   iniciar(cpu, ram);
   destroiPrograma(cpu, 5);
 
+
   trecho1 = destroiTrecho(trecho1, 5);
 
   Instruction **trecho2 = (Instruction **) malloc(3 * sizeof(Instruction*));
   for(int i = 0; i < expoente; i++){
-    tempMult = programaMulti(cpu, getDado(0, ram), getDado(1, ram));
-
+    tempMult = programaMulti(cpu, ram, posInicial + 3, getDado(posInicial, ram), getDado(posInicial + 1, ram));
+    
     trecho2[0] = setInstruction(1, tempMult, -1, 4); //reg1 <- tempMult
-    trecho2[1] = setInstruction(1, 0, -1, 5); //ram[0] <- reg1
+    trecho2[1] = setInstruction(1, posInicial, -1, 5); //ram[0] <- reg1
     trecho2[2] = setInstruction(-1, -1, -1, -1);
 
     setPrograma(cpu, trecho2, 3);
     iniciar(cpu, ram);
     destroiPrograma(cpu, 3);
+
   }
 
   trecho2 = destroiTrecho(trecho2, 3);
 
-  resultado = getDado(0, ram);
-  ram = liberarRAM(ram);
+  resultado = getDado(posInicial, ram);
 
+  ram = zerarRAM(ram, posInicial, posInicial + 3);
+ 
   return resultado;
   
 }
 
-int programaLog(CPU *cpu, int base, int logaritmando){
-  RAM *ram = criarRAM_vazia(1);
+int programaLog(CPU *cpu, RAM *ram, int posInicial, int base, int logaritmando){
+  //RAM *ram = criarRAM_vazia(1);
 
   Instruction **trecho = (Instruction **) malloc(3 * sizeof(Instruction *));
 
@@ -419,10 +451,10 @@ int programaLog(CPU *cpu, int base, int logaritmando){
   int i = 0;
 
   while(aux <= logaritmando){
-    aux = programaExponencial(cpu, base, i);
+    aux = programaExponencial(cpu, ram, posInicial + 1, base, i);
 
     trecho[0] = setInstruction(1, aux, -1, 4); // envia aux para o registrador 1
-    trecho[1] = setInstruction(1, 0, -1, 5); // passa valor do registrador 1 (aux) para a ram[0]
+    trecho[1] = setInstruction(1, posInicial, -1, 5); // passa valor do registrador 1 (aux) para a ram[0]
     trecho[2] = setInstruction(-1, -1, -1, -1); // halt
 
     setPrograma(cpu, trecho, 3);
@@ -434,23 +466,25 @@ int programaLog(CPU *cpu, int base, int logaritmando){
   }
 
   trecho = destroiTrecho(trecho, 3);
-  ram = liberarRAM(ram);
+  ram = zerarRAM(ram, posInicial, posInicial + 1);
 
   return i-2;
 }
 
-int programaRaizCubicaAroximada(CPU *cpu, int valor) {
-  RAM *ram = criarRAM_vazia(1);
+int programaRaizCubicaAroximada(CPU *cpu, RAM *ram, int posInicial, int valor) {
+  //RAM *ram = criarRAM_vazia(1);
 
   Instruction **trecho = (Instruction **) malloc(3 * sizeof(Instruction*));
   int aux = 0;
   int i = 1;
 
   while (aux <= valor) {
-    aux = programaExponencial(cpu, i, 3);
+
+    aux = programaExponencial(cpu, ram, posInicial + 1, i, 3);
+
 
     trecho[0] = setInstruction(1, aux, -1, 4); // reg1 recebe aux; reg1 = aux
-    trecho[1] = setInstruction(1, 0, -1, 5); // ram[0] recebe o valor do reg1
+    trecho[1] = setInstruction(1, posInicial, -1, 5); // ram[0] recebe o valor do reg1
     trecho[2] = setInstruction(-1, -1, -1, -1); // halt
 
     setPrograma(cpu, trecho, 3);
@@ -461,21 +495,21 @@ int programaRaizCubicaAroximada(CPU *cpu, int valor) {
   }
 
   trecho = destroiTrecho(trecho, 3);
-  ram = liberarRAM(ram);
+  ram = zerarRAM(ram, posInicial, posInicial + 1);
 
   return i - 2;
 }
 
 // formula pa: an = a1 + (n - 1) * r 
-int programaTermoPA(CPU *cpu, int a1, int n, int r) { // calcula o n-esimo termo
-  RAM *ram = criarRAM_vazia(4);
+int programaTermoPA(CPU *cpu, RAM *ram, int posInicial, int a1, int n, int r) { // calcula o n-esimo termo
+  //RAM *ram = criarRAM_vazia(4);
   Instruction **trecho = (Instruction **)malloc(6 * sizeof(Instruction *));
 
   trecho[0] = setInstruction(1, n, -1, 4); // reg1 <- n
-  trecho[1] = setInstruction(1, 0, -1, 5); // ram[0] <- reg1
+  trecho[1] = setInstruction(1, posInicial, -1, 5); // ram[0] <- reg1
   trecho[2] = setInstruction(2, 1, -1, 4); // reg2 <- 1;
-  trecho[3] = setInstruction(2, 1, -1, 5); // ram[1] recebe reg2
-  trecho[4] = setInstruction(0, 1, 0, 1);  // salva o resultado de n - 1 na ram[0];
+  trecho[3] = setInstruction(2, posInicial + 1, -1, 5); // ram[1] recebe reg2
+  trecho[4] = setInstruction(posInicial, posInicial + 1, posInicial, 1);  // salva o resultado de n - 1 na ram[0];
   trecho[5] = setInstruction(-1, -1, -1, -1); // halt
 
   setPrograma(cpu, trecho, 6);
@@ -486,7 +520,7 @@ int programaTermoPA(CPU *cpu, int a1, int n, int r) { // calcula o n-esimo termo
 
   Instruction **trecho2 = (Instruction **) malloc(3 * sizeof(Instruction *));
   trecho2[0] = setInstruction(1, r, -1, 4); // reg1 <- r
-  trecho2[1] = setInstruction(1, 1, -1, 5); // ram[1] recebe reg1
+  trecho2[1] = setInstruction(1, posInicial + 1, -1, 5); // ram[1] recebe reg1
   trecho2[2] = setInstruction(-1, -1, -1, -1);
 
   setPrograma(cpu, trecho2, 3);
@@ -495,14 +529,14 @@ int programaTermoPA(CPU *cpu, int a1, int n, int r) { // calcula o n-esimo termo
 
   trecho2 = destroiTrecho(trecho2, 3);
 
-  int aux = programaMulti(cpu, getDado(0, ram), getDado(1, ram));
+  int aux = programaMulti(cpu, ram, posInicial + 3, getDado(posInicial, ram), getDado(posInicial + 1, ram));
 
   Instruction **trecho3 = (Instruction **)malloc(6 * sizeof(Instruction *));
   trecho3[0] = setInstruction(1, a1, -1, 4); // reg1 <- a1
-  trecho3[1] = setInstruction(1, 0, -1, 5);  // ram[0] recebe reg1;
+  trecho3[1] = setInstruction(1, posInicial, -1, 5);  // ram[0] recebe reg1;
   trecho3[2] = setInstruction(2, aux, -1, 4); // reg2 recebe aux;
-  trecho3[3] = setInstruction(2, 1, -1, 5);   // ram[1] recebe reg2;
-  trecho3[4] = setInstruction(0, 1, 2, 0); // ram[2] <- ram[0] + ram[1]
+  trecho3[3] = setInstruction(2, posInicial + 1, -1, 5);   // ram[1] recebe reg2;
+  trecho3[4] = setInstruction(posInicial, posInicial + 1, posInicial + 2, 0); // ram[2] <- ram[0] + ram[1]
   trecho3[5] = setInstruction(-1, -1, -1, -1);
 
   setPrograma(cpu, trecho3, 6);
@@ -510,26 +544,24 @@ int programaTermoPA(CPU *cpu, int a1, int n, int r) { // calcula o n-esimo termo
   destroiPrograma(cpu, 6);
   trecho3 = destroiTrecho(trecho3, 6);
 
-  int result = getDado(2, ram);
+  int result = getDado(posInicial + 2, ram);
 
-  ram = liberarRAM(ram);
+  ram = zerarRAM(ram, posInicial, posInicial + 3);
   return result;
 }
 
-RAM *programaFibonacci(CPU *cpu, RAM *ram, int n){
+RAM *programaFibonacci(CPU *cpu, RAM *ram, int posInicial, int n){
   if (n < 1) {
     printf("\nValor inválido!\n");
 
     return ram;
   }
 
-  
-  ram = aumentarRam(ram, n);
 
   if(n == 1) {
     Instruction **trecho = (Instruction **) malloc(3 * sizeof(Instruction*));
     trecho[0] = setInstruction(1, 0, -1, 4); // reg1 <- 0
-    trecho[1] = setInstruction(1, 0, -1, 5); //ram[0] <- reg1
+    trecho[1] = setInstruction(1, posInicial, -1, 5); //ram[0] <- reg1
     trecho[2] = setInstruction(-1, -1, -1, -1);
 
     setPrograma(cpu, trecho, 3);
@@ -545,8 +577,8 @@ RAM *programaFibonacci(CPU *cpu, RAM *ram, int n){
 
   trecho1[0] = setInstruction(1, 0, -1, 4); //reg1 <- 0
   trecho1[1] = setInstruction(2, 1, -1, 4); //reg2 <- 1
-  trecho1[2] = setInstruction(1, 0, -1, 5); //ram[0] <- reg1
-  trecho1[3] = setInstruction(2, 1, -1, 5); //ram[1] <- reg2
+  trecho1[2] = setInstruction(1, posInicial, -1, 5); //ram[0] <- reg1
+  trecho1[3] = setInstruction(2, posInicial + 1, -1, 5); //ram[1] <- reg2
   trecho1[4] = setInstruction(-1, -1, -1, -1);
 
   setPrograma(cpu, trecho1, 5);
@@ -557,7 +589,7 @@ RAM *programaFibonacci(CPU *cpu, RAM *ram, int n){
 
   Instruction **trecho2 = (Instruction **) malloc(2 * sizeof(Instruction*));
 
-  for (int i = 2; i < n; i++) {
+  for (int i = posInicial + 2; i < posInicial + n; i++) {
     trecho2[0] = setInstruction(i-1, i-2, i, 0); //ram[i] <- ram[i-1] + ram[i-2]
     trecho2[1] = setInstruction(-1, -1, -1, -1);
 
@@ -572,16 +604,16 @@ RAM *programaFibonacci(CPU *cpu, RAM *ram, int n){
 
 }
 
-int programaSomaTermosPA(CPU* cpu, int a1, int n, int r) {
-  RAM *ram = criarRAM_vazia(3);
-  int an = programaTermoPA(cpu, a1, n, r);
+int programaSomaTermosPA(CPU* cpu, RAM *ram, int posInicial, int a1, int n, int r) {
+  //RAM *ram = criarRAM_vazia(3);
+  int an = programaTermoPA(cpu, ram, posInicial + 3, a1, n, r);
 
   Instruction **trecho1 = (Instruction **) malloc(6 * sizeof(Instruction *));
   trecho1[0] = setInstruction(1, an, -1, 4); // reg1 <- an
-  trecho1[1] = setInstruction(1, 0, -1, 5); // ram[0] <- reg1
+  trecho1[1] = setInstruction(1, posInicial, -1, 5); // ram[0] <- reg1
   trecho1[2] = setInstruction(2, a1, -1, 4); // reg2 <- a1
-  trecho1[3] = setInstruction(2, 1, -1, 5); // ram[1] <- reg2
-  trecho1[4] = setInstruction(0, 1, 0, 0); // soma de an + a1 salva na ram[0]
+  trecho1[3] = setInstruction(2, posInicial + 1, -1, 5); // ram[1] <- reg2
+  trecho1[4] = setInstruction(posInicial, posInicial + 1, posInicial, 0); // soma de an + a1 salva na ram[0]
   trecho1[5] = setInstruction(-1, -1, -1, -1);
 
   setPrograma(cpu, trecho1, 6);
@@ -592,7 +624,7 @@ int programaSomaTermosPA(CPU* cpu, int a1, int n, int r) {
 
   Instruction **trecho2 = (Instruction **) malloc(3 * sizeof(Instruction *));
   trecho2[0] = setInstruction(1, n, -1, 4); // reg1 <- n
-  trecho2[1] = setInstruction(1, 1, -1, 5); // ram[1] <- reg1
+  trecho2[1] = setInstruction(1, posInicial + 1, -1, 5); // ram[1] <- reg1
   trecho2[2] = setInstruction(-1, -1, -1, -1);
 
   setPrograma(cpu, trecho2, 3);
@@ -601,13 +633,13 @@ int programaSomaTermosPA(CPU* cpu, int a1, int n, int r) {
 
   trecho2 = destroiTrecho(trecho2, 3);
 
-  int temp = programaMulti(cpu, getDado(0, ram), getDado(1, ram)); // (a1 + an) x n
+  int temp = programaMulti(cpu, ram, posInicial + 3, getDado(posInicial, ram), getDado(posInicial + 1, ram)); // (a1 + an) x n
 
   Instruction **trecho3 = (Instruction **)malloc(5 * sizeof(Instruction *));
   trecho3[0] = setInstruction(1, temp, -1, 4); // reg1 <- temp
-  trecho3[1] = setInstruction(1, 0, -1, 5); // ram[0] <- reg1
+  trecho3[1] = setInstruction(1, posInicial, -1, 5); // ram[0] <- reg1
   trecho3[2] = setInstruction(2, 2, -1, 4); // reg2 <- 2
-  trecho3[3] = setInstruction(2, 1, -1, 5); // ram[1] <- reg2
+  trecho3[3] = setInstruction(2, posInicial + 1, -1, 5); // ram[1] <- reg2
   trecho3[4] = setInstruction(-1, -1, -1, -1);
 
   setPrograma(cpu, trecho3, 5);
@@ -616,19 +648,20 @@ int programaSomaTermosPA(CPU* cpu, int a1, int n, int r) {
 
   trecho3 = destroiTrecho(trecho3, 5);
 
-  int result = programaDiv(cpu, getDado(0, ram), getDado(1, ram));
-  ram = liberarRAM(ram);
+  int result = programaDiv(cpu, ram, posInicial + 3, getDado(posInicial, ram), getDado(posInicial + 1, ram));
+  ram = zerarRAM(ram, posInicial, posInicial + 3);
+
   return result;
 }
 
-int programaModulo(CPU* cpu, int a, int b) {
-  RAM *ram = criarRAM_vazia(3);
+int programaModulo(CPU* cpu, RAM *ram, int posInicial, int a, int b) {
+  //RAM *ram = criarRAM_vazia(3);
 
   Instruction **trecho1 = (Instruction **)malloc(5 * sizeof(Instruction *));
   trecho1[0] = setInstruction(1, a, -1, 4); //reg1 <- a
-  trecho1[1] = setInstruction(1, 0, -1, 5); //ram[0] <- reg1
+  trecho1[1] = setInstruction(1, posInicial, -1, 5); //ram[0] <- reg1
   trecho1[2] = setInstruction(2, b, -1, 4); //reg2 <- b
-  trecho1[3] = setInstruction(2, 1, -1, 5); //ram[1] <- reg2
+  trecho1[3] = setInstruction(2, posInicial + 1, -1, 5); //ram[1] <- reg2
   trecho1[4] = setInstruction(-1, -1, -1, -1);
 
   setPrograma(cpu, trecho1, 5);
@@ -637,54 +670,56 @@ int programaModulo(CPU* cpu, int a, int b) {
 
   trecho1 = destroiTrecho(trecho1, 5);
 
-  int div = programaDiv(cpu, getDado(0, ram), getDado(1, ram)); // divisão entre a e b
+  int div = programaDiv(cpu, ram, posInicial + 3, getDado(posInicial, ram), getDado(posInicial + 1, ram)); // divisão entre a e b
 
-  int mult = programaMulti(cpu, div, getDado(1, ram));
+  int mult = programaMulti(cpu, ram, posInicial + 3, div, getDado(posInicial + 1, ram));
 
   Instruction **trecho2 = (Instruction **)malloc(6 * sizeof(Instruction *));
   trecho2[0] = setInstruction(1, mult, -1, 4); //reg1 <- mult
-  trecho2[1] = setInstruction(1, 2, -1, 5); //ram[2] <- reg1
-  trecho2[2] = setInstruction(0, 2, 0, 1); //ram[0] <- ram[0] - ram[2]
+  trecho2[1] = setInstruction(1, posInicial + 2, -1, 5); //ram[2] <- reg1
+  trecho2[2] = setInstruction(posInicial, posInicial + 2, posInicial, 1); //ram[0] <- ram[0] - ram[2]
   trecho2[3] = setInstruction(-1, -1, -1, -1);
 
   setPrograma(cpu, trecho2, 4);
   iniciar(cpu, ram);
   destroiPrograma(cpu, 4);
 
-  int result = getDado(0, ram);
+  int result = getDado(posInicial, ram);
 
   trecho2 = destroiTrecho(trecho2, 4);
-  ram = liberarRAM(ram);
+  ram = zerarRAM(ram, posInicial, posInicial + 3);
 
   return result;
 }
 
-bool programaEhNumeroPrimo(CPU *cpu, int valor) {
+bool programaEhNumeroPrimo(CPU *cpu, RAM *ram, int posInicial, int valor) {
   if (valor <= 1)
     return false;
 
   if (valor == 2 || valor == 3)
     return true;
 
-  int raiz = programaRaizAproximada(cpu, valor);
+  int raiz = programaRaizAproximada(cpu, ram, posInicial, valor);
 
-  for (int i = 2; i < raiz; i++) {
-    if (programaModulo(cpu, valor, i) == 0)
+  for (int i = 2; i <= raiz; i++) {
+    if (programaModulo(cpu, ram, posInicial + 2, valor, i) == 0)
       return false;
   }
+
+  ram = zerarRAM(ram, posInicial, posInicial + 2);
 
   return true;
 }
 
-int programaMdc(CPU *cpu, int a, int b){
+int programaMdc(CPU *cpu, RAM *ram, int posInicial, int a, int b){
 
-  RAM *ram = criarRAM_vazia(3);
+  //RAM *ram = criarRAM_vazia(3);
   
   Instruction **trecho1 = (Instruction **) malloc(5 * sizeof(Instruction *));
   trecho1[0] = setInstruction(1, a, -1, 4); //reg1 <- a
   trecho1[1] = setInstruction(2, b, -1, 4); //reg2 <- b
-  trecho1[2] = setInstruction(1, 0, -1, 5); //ram[0] <- reg1 (a)
-  trecho1[3] = setInstruction(2, 1, -1, 5); //ram[1] <- reg2 (b)
+  trecho1[2] = setInstruction(1, posInicial, -1, 5); //ram[0] <- reg1 (a)
+  trecho1[3] = setInstruction(2, posInicial + 1, -1, 5); //ram[1] <- reg2 (b)
   trecho1[4] = setInstruction(-1, -1, -1, -1); //halt
 
   setPrograma(cpu, trecho1, 5);
@@ -696,16 +731,16 @@ int programaMdc(CPU *cpu, int a, int b){
   Instruction **trecho2 = (Instruction **) malloc(7 * sizeof(Instruction *));
   int resto;
   
-  while(getDado(1, ram) != 0){
+  while(getDado(posInicial + 1, ram) != 0){
   //(r)                            // (a)               //(b)
-    resto = programaModulo(cpu, getDado(0, ram), getDado(1, ram));
+    resto = programaModulo(cpu, ram, posInicial + 3, getDado(posInicial, ram), getDado(posInicial + 1, ram));
     
-    trecho2[0] = setInstruction(1, 0, -1, 3); //reg1 <- ram[0](a)
-    trecho2[1] = setInstruction(1, 2, -1, 5); //ram[2] <- reg1
-    trecho2[2] = setInstruction(1, 1, -1, 3); //reg1 <- ram[1](b)
-    trecho2[3] = setInstruction(1, 0, -1, 5); //ram[0] <- reg1(b)
+    trecho2[0] = setInstruction(1, posInicial, -1, 3); //reg1 <- ram[0](a)
+    trecho2[1] = setInstruction(1, posInicial + 2, -1, 5); //ram[2] <- reg1
+    trecho2[2] = setInstruction(1, posInicial + 1, -1, 3); //reg1 <- ram[1](b)
+    trecho2[3] = setInstruction(1, posInicial, -1, 5); //ram[0] <- reg1(b)
     trecho2[4] = setInstruction(2, resto, -1, 4); //reg2 <- (r)
-    trecho2[5] = setInstruction(2, 1, -1, 5); //ram[1] <- reg2(r)
+    trecho2[5] = setInstruction(2, posInicial + 1, -1, 5); //ram[1] <- reg2(r)
     trecho2[6] = setInstruction(-1, -1, -1, -1); //halt
 
     setPrograma(cpu, trecho2, 7);
@@ -716,17 +751,17 @@ int programaMdc(CPU *cpu, int a, int b){
 
   trecho2 = destroiTrecho(trecho2, 7);
 
-  int result = getDado(0, ram);
+  int result = getDado(posInicial, ram);
 
-  ram = liberarRAM(ram);
+  ram = zerarRAM(ram, posInicial, posInicial + 3);
 
   return result;
   
 }
 
-bool programaEhPar(CPU *cpu, int a) {
+bool programaEhPar(CPU *cpu, RAM *ram, int posInicial, int a) {
   // calcula módulo da divisão de a por 2
-  int res = programaModulo(cpu, a, 2);
+  int res = programaModulo(cpu, ram, posInicial, a, 2);
 
   // se modulo da divisão por 2 == 0 -> é par (true)
   if (!res) return true;
@@ -734,7 +769,7 @@ bool programaEhPar(CPU *cpu, int a) {
   else return false;
 }
 
-int programaMmc(CPU *cpu, int a, int b) {
+int programaMmc(CPU *cpu, RAM *ram, int posInicial, int a, int b) {
   // Calcular o MMC usando a fórmula: MMC(a, b) = (a * b) / MDC(a, b)
-  return programaDiv(cpu, programaMulti(cpu, a, b), programaMdc(cpu, a, b));
+  return programaDiv(cpu, ram, posInicial, programaMulti(cpu, ram, posInicial, a, b), programaMdc(cpu, ram, posInicial, a, b));
 }

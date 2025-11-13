@@ -7,6 +7,8 @@
 #include "instrucao.h"
 #include "programas.h"
 
+#define TAMANHO_RAM 1000
+
 void programas();
 
 int main() {
@@ -18,10 +20,10 @@ int main() {
 }
 
 void programas(){
-	RAM *ram = NULL;
+
+	RAM *ram = criarRAM_vazia(TAMANHO_RAM);
 	CPU *cpu;
 	int a, b, c, n;
-	int res[2];
 
 	cpu = criarCPU();
 	int op;
@@ -64,15 +66,16 @@ void programas(){
 			case 1:
 				printf("Insira o tamanho da memória: ");
 				scanf("%d", &n);
-				ram =	criarRAM_aleatoria(n);
+				RAM *tempRam =	criarRAM_aleatoria(n);
 				printf("\nRam aleatoria gerada: \n");
-				imprimir(ram);
+				imprimir(tempRam);
+				tempRam = liberarRAM(tempRam);
 				break;
 			//mult
 			case 2:
 				printf("\nInsira dois valores para multiplicação: ");
 				scanf("%d%d", &a, &b);
-				printf("%d x %d = %d\n", a, b, programaMulti(cpu, a, b));
+				printf("%d x %d = %d\n", a, b, programaMulti(cpu, ram, 0, a, b));
 				
 				break;
 				
@@ -80,7 +83,7 @@ void programas(){
 			case 3:
 				printf("\nInsira dois valores para divisão inteira: ");
 				scanf("%d%d", &a, &b);
-				printf("%d / %d = %d\n", a, b, programaDiv(cpu, a, b));
+				printf("%d / %d = %d\n", a, b, programaDiv(cpu, ram, 0, a, b));
 
 				break;
 				
@@ -88,7 +91,7 @@ void programas(){
 			case 4:
 				printf("\nInsira A e B para obter o módulo entre eles: ");
 				scanf("%d %d", &a, &b);
-				printf("\nO módulo de A/B = %d\n", programaModulo(cpu, a, b));
+				printf("\nO módulo de A/B = %d\n", programaModulo(cpu, ram, 0, a, b));
 
 				break;
 				
@@ -96,7 +99,7 @@ void programas(){
 			case 5:
 				printf("\nInsira um valor para verificar se é par: ");
 				scanf("%d", &a);
-				printf("%d %sé par", a, programaEhPar(cpu, a) ? "" : "não " );
+				printf("%d %sé par", a, programaEhPar(cpu, ram, 0, a) ? "" : "não " );
 
 				break;
 				
@@ -104,7 +107,7 @@ void programas(){
 			case 6:
 				printf("\nInsira um número para verificar se ele é primo: ");
 				scanf("%d", &a);
-				printf("O número %d %sé primo\n", a, programaEhNumeroPrimo(cpu, a) ? "" : "não " );
+				printf("O número %d %sé primo\n", a, programaEhNumeroPrimo(cpu, ram, 0, a) ? "" : "não " );
 
 				break;
 				
@@ -112,7 +115,7 @@ void programas(){
 			case 7:
 				printf("\nInsira um valor para calcular sua raiz quadrada aproximada: ");
 				scanf("%d", &a);
-				printf("Raiz quadrada de %d = %d\n", a, programaRaizAproximada(cpu, a));
+				printf("Raiz quadrada de %d = %d\n", a, programaRaizAproximada(cpu, ram, 0, a));
 
 				break;
 				
@@ -120,7 +123,7 @@ void programas(){
 			case 8:
 				printf("\nInsira um valor para calcular sua raiz cubica aproximada: ");
 				scanf("%d", &a);
-				printf("Raiz cubica de %d = %d\n", a, programaRaizCubicaAroximada(cpu, a));
+				printf("Raiz cubica de %d = %d\n", a, programaRaizCubicaAroximada(cpu, ram, 0, a));
 
 				break;
 				
@@ -128,7 +131,7 @@ void programas(){
 			case 9:
 				printf("\nDigite um valor para calcular seu fatorial: ");
 				scanf("%d", &a);
-				printf("Fatorial de %d = %d\n", a, programaFatorial(cpu, a));
+				printf("Fatorial de %d = %d\n", a, programaFatorial(cpu, ram, 0, a));
 
 				break;
 				
@@ -136,7 +139,7 @@ void programas(){
 			case 10:
 				printf("\nDigite base e expoente para calcular exponenciação: ");
 				scanf("%d%d", &a, &b);
-				printf("%d ^ %d = %d\n", a, b, programaExponencial(cpu, a, b));
+				printf("%d ^ %d = %d\n", a, b, programaExponencial(cpu, ram, 0, a, b));
 
 				break;
 				
@@ -144,7 +147,7 @@ void programas(){
 			case 11:
 				printf("\nDigite base e logaritmando: ");
 				scanf("%d%d", &a, &b);
-				printf("log(%d, %d) = %d\n", a, b, programaLog(cpu, a, b));
+				printf("log(%d, %d) = %d\n", a, b, programaLog(cpu, ram, 0, a, b));
 
 				break;
 			
@@ -152,7 +155,7 @@ void programas(){
 			case 12:
 				printf("\nInsira dois valores para o cálculo do MDC: ");
 				scanf("%d%d", &a, &b);
-				printf("MDC entre %d e %d = %d\n", a, b, programaMdc(cpu, a, b));
+				printf("MDC entre %d e %d = %d\n", a, b, programaMdc(cpu, ram, 0, a, b));
 
 				break;
 				
@@ -160,7 +163,7 @@ void programas(){
 			case 13:
 				printf("\nInsira dois valores para o cálculo do MMC: ");
 				scanf("%d%d", &a, &b);
-				printf("MMC entre %d e %d = %d\n", a, b, programaMmc(cpu, a, b));
+				printf("MMC entre %d e %d = %d\n", a, b, programaMmc(cpu, ram, 0, a, b));
 
 				break;
 				
@@ -168,10 +171,10 @@ void programas(){
 			case 14:
 				printf("\nDigite a, b e c para calcular a fórmula de bháskara: ");
 				scanf("%d%d%d", &a, &b, &c);
-				int aux = programaBhaskara(cpu, a, b, c, res);
+				int aux = programaBhaskara(cpu, ram, 0, a, b, c, 4);
 
 				if (aux) {
-					printf("X1 = %d\nX2 = %d\n", res[0], res[1]);
+					printf("X1 = %d\nX2 = %d\n", getDado(4, ram), getDado(5, ram));
 				}
 				else {
 					printf("Delta negativo! Sem raízes reais!\n");
@@ -184,15 +187,14 @@ void programas(){
 				printf("\nDigite até qual elemento da sequência de fibonacci você deseja: ");
 				scanf("%d", &a);
 
-				ram = criarRAM_vazia(1);
-				programaFibonacci(cpu, ram, a);
+				programaFibonacci(cpu, ram, 0, a);
 
 				printf("\nSequência Fibonacci até %dº elemento:\n", a);
 				for(int i = 0; i < a; i++){
 					printf("%d ", getDado(i, ram));
 				}
 				printf("\n");
-
+				ram = zerarRAM(ram, 0, a);
 				break;
 				
 			//n termo da pa
@@ -200,7 +202,7 @@ void programas(){
 				int a1, n, r;
 				printf("\nInsira a1, n e r para calcular o n-ésimo termo da PA: ");
 				scanf("%d %d %d", &a1, &n, &r);
-				printf("\nn-ésimo termo = %d\n", programaTermoPA(cpu, a1, n, r));
+				printf("\nn-ésimo termo = %d\n", programaTermoPA(cpu, ram, 0, a1, n, r));
 				
 				break;
 				
@@ -208,7 +210,7 @@ void programas(){
 			case 17:
 				printf("\nInsira a1, n e r para calcular a soma dos termos da PA: ");
 				scanf("%d %d %d", &a1, &n, &r);
-				printf("\nSoma dos termos = %d\n", programaSomaTermosPA(cpu, a1, n, r));
+				printf("\nSoma dos termos = %d\n", programaSomaTermosPA(cpu, ram, 0, a1, n, r));
 				
 				break;
 				
@@ -218,23 +220,18 @@ void programas(){
 				printf("\nInsira n e m para criar a primeira matriz: ");
 				scanf("%d%d", &n1, &m1);
 
-				ram = NULL;
-				ram = criaMatriz(n1, m1, ram);
-				ram = programaPreencheMatriz(cpu, ram, 0, n1, m1);
-				int tamM1 = getTamanho(ram);
+				ram = programaPreencheMatriz(cpu, ram, TAMANHO_RAM - 2, 0, n1, m1);
+				int tamM1 =  programaMulti(cpu, ram, TAMANHO_RAM - 2 , n1, m1);
 
 				printf("\nInsira n e m para criar a segunda matriz: ");
 				scanf("%d%d", &n2, &m2);
 
-				int tamM2 = programaMulti(cpu, n2, m2);
+				int tamM2 = programaMulti(cpu, ram, TAMANHO_RAM - 2, n2, m2);
 
-				ram = aumentarRam(ram, tamM1 + tamM2);
-				ram = programaPreencheMatriz(cpu, ram, tamM1, n2, m2);
+				ram = programaPreencheMatriz(cpu, ram, TAMANHO_RAM - 2, tamM1, n2, m2);
 
 				printf("\nResultante de Matriz1 x Matriz2:\n");
-				ram = programaMultiplicaMatriz(cpu, ram, n1, m1, n2, m2);
-
-				ram = liberarRAM(ram);
+				ram = programaMultiplicaMatriz(cpu, ram, TAMANHO_RAM - 6, 0, n1, m1, n2, m2);
 				
 				break;
 				
@@ -244,7 +241,7 @@ void programas(){
 		}
 
 		if (!op) break;
-
+		
 		printf("\nPressione enter...");
 		getchar();
 		getchar();
