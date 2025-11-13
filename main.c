@@ -174,7 +174,7 @@ void programas(){
 				int aux = programaBhaskara(cpu, ram, 0, a, b, c, 4);
 
 				if (aux) {
-					printf("X1 = %d\nX2 = %d\n", getDado(4, ram), getDado(5, ram));
+					printf("X1 = %d\nX2 = %d\n", getDado(40, ram), getDado(41, ram));
 				}
 				else {
 					printf("Delta negativo! Sem raízes reais!\n");
