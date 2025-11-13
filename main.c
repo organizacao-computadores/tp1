@@ -171,7 +171,7 @@ void programas(){
 			case 14:
 				printf("\nDigite a, b e c para calcular a fórmula de bháskara: ");
 				scanf("%d%d%d", &a, &b, &c);
-				int aux = programaBhaskara(cpu, ram, 0, a, b, c, 4);
+				int aux = programaBhaskara(cpu, ram, 0, a, b, c, 40);
 
 				if (aux) {
 					printf("X1 = %d\nX2 = %d\n", getDado(40, ram), getDado(41, ram));
