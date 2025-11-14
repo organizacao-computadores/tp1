@@ -18,6 +18,7 @@ int programaLog(CPU *cpu, RAM *ram, int posInicial, int base, int logaritmando);
 int programaMdc(CPU *cpu, RAM *ram, int posInicial, int a, int b);
 int programaMmc(CPU *cpu, RAM *ram, int posInicial, int a, int b);
 int programaBhaskara(CPU *cpu, RAM *ram, int posInicial, int a, int b, int c, int res);
+int programaDistAproxEntrePontos(CPU *cpu, RAM *ram, int posInicial, int xa, int ya, int xb, int yb);
 bool programaEhNumeroPrimo(CPU *cpu, RAM *ram, int posInicial, int valor);
 bool programaEhPar(CPU *cpu, RAM *ram, int posInicial, int a);
 

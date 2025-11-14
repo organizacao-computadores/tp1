@@ -52,6 +52,7 @@ void programas(){
 		printf("16 - N-esimo termo da PA\n");
 		printf("17 - Soma dos Termos da PA\n");
 		printf("18 - Multiplicação de Matrizes\n");
+		printf("19 - Distância aproximada entre dois pontos\n");
 		printf("=====================================================================");
 
 		printf("\nSelecione o código da operação a ser realizada: ");
@@ -232,7 +233,18 @@ void programas(){
 				ram = programaMultiplicaMatriz(cpu, ram, TAMANHO_RAM - 6, 0, n1, m1, n2, m2);
 				
 				break;
-				
+			
+			//dist entre pontos
+			case 19:
+				int xa, ya, xb, yb;
+				printf("\nDigite as coordenadas do ponto A: ");
+				scanf("%d%d", &xa, &ya);
+				printf("Digite as coordenadas do ponto B: ");
+				scanf("%d%d", &xb, &yb);
+
+				printf("\nDistância entre A e B = %d\n", programaDistAproxEntrePontos(cpu, ram, 0, xa, ya, xb, yb));
+				break;
+
 			default:
 				printf("\nOperação não encontrada!\n");
 				break;

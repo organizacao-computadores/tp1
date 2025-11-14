@@ -711,7 +711,6 @@ bool programaEhNumeroPrimo(CPU *cpu, RAM *ram, int posInicial, int valor) {
 }
 
 int programaMdc(CPU *cpu, RAM *ram, int posInicial, int a, int b){
-
   //RAM *ram = criarRAM_vazia(3);
   
   Instruction **trecho1 = (Instruction **) malloc(5 * sizeof(Instruction *));
@@ -762,13 +761,67 @@ bool programaEhPar(CPU *cpu, RAM *ram, int posInicial, int a) {
   // calcula módulo da divisão de a por 2
   int res = programaModulo(cpu, ram, posInicial, a, 2);
 
-  // se modulo da divisão por 2 == 0 -> é par (true)
+  // se não tem modulo -> é par (true)
   if (!res) return true;
-  // se não -> é ímpar (false)
+  // se tem módulo -> é ímpar (false)
   else return false;
 }
 
 int programaMmc(CPU *cpu, RAM *ram, int posInicial, int a, int b) {
-  // Calcular o MMC usando a fórmula: MMC(a, b) = (a * b) / MDC(a, b)
+  // calcular o MMC usando a fórmula: MMC(a, b) = (a * b) / MDC(a, b)
   return programaDiv(cpu, ram, posInicial, programaMulti(cpu, ram, posInicial, a, b), programaMdc(cpu, ram, posInicial, a, b));
+}
+
+int programaDistAproxEntrePontos(CPU *cpu, RAM *ram, int posInicial, int xa, int ya, int xb, int yb) {
+  //instruções para o ponto A
+  Instruction **trecho1 = (Instruction **) malloc(5 * sizeof(Instruction *));
+  trecho1[0] = setInstruction(1, xa, -1, 4); //reg1 <- xa
+  trecho1[1] = setInstruction(2, ya, -1, 4); //reg2 <- ya
+  trecho1[2] = setInstruction(1, posInicial, -1, 5); //ram[0] <- reg1
+  trecho1[3] = setInstruction(2, posInicial + 1, -1, 5); //ram[1] <- reg2
+  trecho1[4] = setInstruction(-1, -1, -1, -1); //halt
+
+  setPrograma(cpu, trecho1, 5);
+  iniciar(cpu, ram);
+  destroiPrograma(cpu, 5);
+  trecho1 = destroiTrecho(trecho1, 5);
+
+  //instruções para o ponto B
+  Instruction **trecho2 = (Instruction **) malloc(5 * sizeof(Instruction *));
+  trecho2[0] = setInstruction(1, xb, -1, 4); //reg1 <- xb
+  trecho2[1] = setInstruction(2, yb, -1, 4); //reg2 <- yb
+  trecho2[2] = setInstruction(1, posInicial + 2, -1, 5); //ram[2] <- reg1 (xb)
+  trecho2[3] = setInstruction(2, posInicial + 3, -1, 5); //ram[3] <- reg2 (yb)
+  trecho2[4] = setInstruction(-1, -1, -1, -1); //halt
+
+  setPrograma(cpu, trecho2, 5);
+  iniciar(cpu, ram);
+  destroiPrograma(cpu, 5);
+  trecho2 = destroiTrecho(trecho2, 5);
+
+  //calcula distancia => dist = sqrt( (xb-xa)^2 + (yb-ya)^2 )
+  int dx = getDado(posInicial + 2, ram) - getDado(posInicial, ram); //xb - xa
+  int dy = getDado(posInicial + 3, ram) - getDado(posInicial + 1, ram); //yb - ya
+
+  int aux1 = programaExponencial(cpu, ram, posInicial + 5, dx, 2); //(xb-xa)^2  //utiliza posInicial + 5 para não sobrescrever dados úteis
+  int aux2 = programaExponencial(cpu, ram, posInicial + 5, dy, 2); //(yb-ya)^2 
+  
+  int dist = programaRaizAproximada(cpu, ram, posInicial + 5, aux1 + aux2); //sqrt(aux1 + aux2)
+
+  //instruções para o resultado
+  Instruction **trecho3 = (Instruction **) malloc(3 * sizeof(Instruction *));
+  trecho3[0] = setInstruction(1, dist, -1, 4); //reg1 <- dist
+  trecho3[1] = setInstruction(1, posInicial + 4, -1, 5); //ram[4] <- reg1
+  trecho3[2] = setInstruction(-1, -1, -1, -1); //halt
+
+  setPrograma(cpu, trecho3, 3);
+  iniciar(cpu, ram);
+  destroiPrograma(cpu, 3);
+  trecho3 = destroiTrecho(trecho3, 3);
+
+  //retorna resultado e zera as posições utilizadas da ram
+  int result = getDado(posInicial + 4, ram);
+  ram = zerarRAM(ram, posInicial, posInicial + 5);
+
+  return result;
 }
