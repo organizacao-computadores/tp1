@@ -341,14 +341,10 @@ int programaFatorial(CPU *cpu, RAM *ram, int posInicial, int valor) {
 }
 
 int programaBhaskara(CPU *cpu, RAM *ram, int posInicial, int a, int b, int c, int res) {
-  // criação de RAM temporária
-  //RAM *ram = criarRAM_vazia(2);
-
   ram = zerarRAM(ram, res, res + 1);
 
   // cria vetor de instruções
   Instruction **trecho = (Instruction **) malloc(5 * sizeof(Instruction *));
-
   
   // calculo de delta
   int delta = programaMulti(cpu, ram, posInicial + 2, b, b) - programaMulti(cpu, ram, posInicial + 2, 4, programaMulti(cpu, ram, posInicial + 2, a, c));
@@ -357,41 +353,43 @@ int programaBhaskara(CPU *cpu, RAM *ram, int posInicial, int a, int b, int c, in
     return 0;
   }
   else {
-    // calculo de x1
+    // calculo de x1 => x1 = (-b + sqrt(delta)) / 2a
     int x1 = programaDiv(cpu, ram, posInicial + 2, (-b + programaRaizAproximada(cpu, ram, posInicial + 2, delta) ), programaMulti(cpu, ram, posInicial + 2, 2, a)); 
-
-    trecho[0] = setInstruction(1, x1, -1, 4); // envia res para o registrador 1
-    trecho[1] = setInstruction(1, posInicial, -1, 5); // passa valor do registrador 1 (x1) para a ram[0]
-    trecho[2] = setInstruction(-1, -1, -1, -1); // halt
     
-    setPrograma(cpu, trecho, 5); // envia as instruções para a cpu
-    iniciar(cpu, ram); // executa as instruções na cpu
-    destroiPrograma(cpu, 5); // free no programa criado   
-
-    // calculo de x2
+    trecho[0] = setInstruction(1, x1, -1, 4); //envia x1 para o registrador 1
+    trecho[1] = setInstruction(1, posInicial, -1, 5); //passa x1 para a ram[posInicial]
+    trecho[2] = setInstruction(-1, -1, -1, -1); //halt
+    
+    //executando programa na cpu
+    setPrograma(cpu, trecho, 3);
+    iniciar(cpu, ram);
+    destroiPrograma(cpu, 3);
+    
+    // calculo de x2 => x2 = (-b - sqrt(delta)) / 2a
     int x2 = programaDiv(cpu, ram, posInicial + 2, (-b - programaRaizAproximada(cpu, ram, posInicial + 2, delta) ), programaMulti(cpu, ram, posInicial + 2, 2, a)); 
     
-    trecho[0] = setInstruction(1, x2, -1, 4); // envia res para o registrador 1
-    trecho[1] = setInstruction(1, posInicial + 1, -1, 5); // passa valor do registrador 2 (x2) para a ram[1]
-    trecho[2] = setInstruction(-1, -1, -1, -1); // halt
+    trecho[0] = setInstruction(1, x2, -1, 4); //envia x2 para o registrador 1
+    trecho[1] = setInstruction(1, posInicial + 1, -1, 5); //passa x2 para a ram[posInicial + 1]
+    trecho[2] = setInstruction(-1, -1, -1, -1); //halt
 
-    setPrograma(cpu, trecho, 5); // envia as instruções para a cpu
-    iniciar(cpu, ram); // executa as instruções na cpu
-    destroiPrograma(cpu, 5); // free no programa criado   
+    // executando programa na cpu
+    setPrograma(cpu, trecho, 3);
+    iniciar(cpu, ram);
+    destroiPrograma(cpu, 3);
 
-    //liberarRAM(ram);
+    //zera a ram
     ram = zerarRAM(ram, posInicial, posInicial + 2);
-    // atualiza vetor de resultados
     
+    // atualiza resultados  
     trecho[0] = setInstruction(1, x1, -1, 4);
     trecho[1] = setInstruction(2, x2, -1, 4);
     trecho[2] = setInstruction(1, res, -1, 5);
     trecho[3] = setInstruction(2, res + 1, -1, 5);
     trecho[4] = setInstruction(-1, -1, -1, -1);
     
-    setPrograma(cpu, trecho, 5); // envia as instruções para a cpu
-    iniciar(cpu, ram); // executa as instruções na cpu
-    destroiPrograma(cpu, 5); // free no programa criado  
+    setPrograma(cpu, trecho, 5); // aqui realmente usamos 5 instruções válidas
+    iniciar(cpu, ram);
+    destroiPrograma(cpu, 5);  
 
     // libera memorias alocadas
     trecho = destroiTrecho(trecho, 5);
@@ -399,6 +397,7 @@ int programaBhaskara(CPU *cpu, RAM *ram, int posInicial, int a, int b, int c, in
     return 1;
   }
 }
+
 
 int programaExponencial(CPU *cpu, RAM *ram, int posInicial, int base, int expoente){
   int resultado, tempMult;

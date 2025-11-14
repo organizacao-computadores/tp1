@@ -99,7 +99,7 @@ void programas(){
 			case 5:
 				printf("\nInsira um valor para verificar se é par: ");
 				scanf("%d", &a);
-				printf("%d %sé par", a, programaEhPar(cpu, ram, 0, a) ? "" : "não " );
+				printf("%d %sé par\n", a, programaEhPar(cpu, ram, 0, a) ? "" : "não " );
 
 				break;
 				
@@ -225,8 +225,6 @@ void programas(){
 
 				printf("\nInsira n e m para criar a segunda matriz: ");
 				scanf("%d%d", &n2, &m2);
-
-				int tamM2 = programaMulti(cpu, ram, TAMANHO_RAM - 2, n2, m2);
 
 				ram = programaPreencheMatriz(cpu, ram, TAMANHO_RAM - 2, tamM1, n2, m2);
 
