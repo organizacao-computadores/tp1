@@ -10,7 +10,6 @@ struct cpu {
 	int reg2;
 	int PC;
 	Instruction **programa;
-	//int opcode;
 };
 
 CPU *criarCPU(){
@@ -48,8 +47,6 @@ void iniciar(CPU *cpu, RAM *ram){
 
 		switch (tempOpcode){
 		case -1:
-			//printf("\nFim do programa!\n");
-			//imprimir(ram);
 			break;
 		case 0:
 			cpu->reg1 = getDado(getAdd1(tempInst), ram);

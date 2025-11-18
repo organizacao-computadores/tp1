@@ -152,15 +152,12 @@ int programaDiv(CPU *cpu, RAM *ram, int posInicial, int dividendo, int divisor){
 }
 
 int programaRaizAproximada(CPU *cpu, RAM *ram, int posInicial, int valor) {
-
   //cria um vetor de instruções
   Instruction **trecho = (Instruction **) malloc(3 * sizeof(Instruction *));
   
   // multiplica i^2 até o resultado ser maior ou igual que o valor digitado
-
   int i = 1;
-
-  while (getDado(posInicial, ram) <= valor) {
+  while (getDado(posInicial, ram) <= valor/2) {
     
     trecho[0] = setInstruction(1, programaMulti(cpu, ram, posInicial + 1, i, i), -1, 4); // envia i*i para o registrador 1
     trecho[1] = setInstruction(1, posInicial, -1, 5); // passa valor do registrador 1 (aux) para a ram[0]
@@ -653,6 +650,7 @@ int programaSomaTermosPA(CPU* cpu, RAM *ram, int posInicial, int a1, int n, int 
   return result;
 }
 
+// A - (B x A/B)
 int programaModulo(CPU* cpu, RAM *ram, int posInicial, int a, int b) {
   //RAM *ram = criarRAM_vazia(3);
 

@@ -72,6 +72,7 @@ void programas(){
 				imprimir(tempRam);
 				tempRam = liberarRAM(tempRam);
 				break;
+				
 			//mult
 			case 2:
 				printf("\nInsira dois valores para multiplicação: ");
