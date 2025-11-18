@@ -823,3 +823,47 @@ int programaDistAproxEntrePontos(CPU *cpu, RAM *ram, int posInicial, int xa, int
 
   return result;
 }
+
+int programaDeterminante2x2(CPU* cpu, RAM* ram, int posInicialRAM, int posInicialMatriz) {
+  /*
+  [a b] [00 01]
+  [c d] [10 11]
+  */
+  
+  int diagonalP, diagonalS;
+  int enderecos[4]; // [a, b, c, d]
+  int baseTemp = posInicialMatriz + 10;
+
+  for (int i = 0; i < 2; i++) {
+    for (int j = 0; j < 2; j++) {
+      enderecos[(i * 2) + j] = encontrarPosicaoMatriz(cpu, ram, baseTemp, posInicialMatriz, 2, 2, i, j);
+    }
+  }
+
+  // Diagonal principal: a x d
+  diagonalP = programaMulti(cpu, ram, baseTemp, getDado(enderecos[0], ram), getDado(enderecos[3], ram));
+
+  // Diagonal secundária: b x c
+  diagonalS = programaMulti(cpu, ram, baseTemp, getDado(enderecos[1], ram), getDado(enderecos[2], ram));
+
+  Instruction **trecho1 = (Instruction **)malloc(6 * sizeof(Instruction *));
+  trecho1[0] = setInstruction(1, diagonalP, -1, 4);
+  trecho1[1] = setInstruction(1, posInicialRAM, -1, 5); // manda o valor do reg1 pra ram[posInicialRam]
+  trecho1[2] = setInstruction(2, diagonalS, -1, 4);
+  trecho1[3] = setInstruction(2, posInicialRAM + 1, -1, 5); 
+
+  // faz a subtração da diagonal P e da diagonal S e salva na primeira posição da RAM
+  trecho1[4] = setInstruction(posInicialRAM, posInicialRAM + 1, posInicialRAM, 1);
+  trecho1[5] = setInstruction(-1, -1, -1, -1);
+
+  setPrograma(cpu, trecho1, 6);
+  iniciar(cpu, ram);
+  destroiPrograma(cpu, 6);
+
+  trecho1 = destroiTrecho(trecho1, 6);
+
+  int det = getDado(posInicialRAM, ram);
+  ram = zerarRAM(ram, posInicialMatriz, posInicialMatriz + 2);
+
+  return det;
+}

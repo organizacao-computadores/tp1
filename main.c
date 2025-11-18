@@ -53,6 +53,7 @@ void programas(){
 		printf("17 - Soma dos Termos da PA\n");
 		printf("18 - Multiplicação de Matrizes\n");
 		printf("19 - Distância aproximada entre dois pontos\n");
+		printf("20 - Determinate de uma matriz 2x2\n");
 		printf("=====================================================================");
 
 		printf("\nSelecione o código da operação a ser realizada: ");
@@ -244,6 +245,18 @@ void programas(){
 				scanf("%d%d", &xb, &yb);
 
 				printf("\nDistância entre A e B = %d\n", programaDistAproxEntrePontos(cpu, ram, 0, xa, ya, xb, yb));
+				break;
+
+			// det2x2
+			case 20:
+				int pos_inicial_matriz = 0;
+				int pos_inicial_temp = TAMANHO_RAM - 6;
+
+				printf("Inserir os valores da matriz 2x2: \n");
+				ram = programaPreencheMatriz(cpu, ram, pos_inicial_temp, pos_inicial_matriz, 2, 2);
+
+				int det = programaDeterminante2x2(cpu, ram, pos_inicial_temp, pos_inicial_matriz);
+				printf("O determinante da matriz 2x2 é: %d", det);
 				break;
 
 			default:
