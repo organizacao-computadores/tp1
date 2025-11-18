@@ -867,3 +867,96 @@ int programaDeterminante2x2(CPU* cpu, RAM* ram, int posInicialRAM, int posInicia
 
   return det;
 }
+
+int programaDeterminante3x3(CPU* cpu, RAM *ram, int posInicialRAM, int posInicialMatriz) {
+  /*
+  [m00 m01 m02]
+  [m10 m11 m12]
+  [m20 m21 m22]
+  */
+
+  int enderecos_matriz[9]; // vai de posInicialMatriz ate posInicialMatriz + 8
+  int baseTemp = posInicialMatriz + 10;
+
+  for (int i = 0; i < 3; i++) {
+    for (int j = 0; j < 3; j++) {
+      enderecos_matriz[(i * 3) + j] = encontrarPosicaoMatriz(cpu, ram, baseTemp, posInicialMatriz, 3, 3, i, j);
+    }
+  }
+
+  int m00 = getDado(enderecos_matriz[0], ram);
+  int m01 = getDado(enderecos_matriz[1], ram);
+  int m02 = getDado(enderecos_matriz[2], ram);
+  int m10 = getDado(enderecos_matriz[3], ram);
+  int m11 = getDado(enderecos_matriz[4], ram);
+  int m12 = getDado(enderecos_matriz[5], ram);
+  int m20 = getDado(enderecos_matriz[6], ram);
+  int m21 = getDado(enderecos_matriz[7], ram);
+  int m22 = getDado(enderecos_matriz[8], ram);
+
+
+  // Calcular as 3 diagonais principais e as 3 diagonais secundárias
+  int p1, p2, p3, s1, s2, s3;
+  int resultP = posInicialRAM; // onde a soma das diagonais principais será armazenado
+  int resultS = posInicialRAM + 1;
+  int determinante = posInicialRAM + 6;
+
+  // p1 = m00 * m11 * m22
+  p1 = programaMulti(cpu, ram, baseTemp, m00, m11);
+  p1 = programaMulti(cpu, ram, baseTemp, p1, m22);
+
+  // p2 = m01 * m12 * m20
+  p2 = programaMulti(cpu, ram, baseTemp, m01, m12);
+  p2 = programaMulti(cpu, ram, baseTemp, p2, m20);
+
+  // p3 = m02 * m10 * m21
+  p3 = programaMulti(cpu, ram, baseTemp, m02, m10);
+  p3 = programaMulti(cpu, ram, baseTemp, p3, m21);
+
+  // s1 = m02 * m11 * m20
+  s1 = programaMulti(cpu, ram, baseTemp, m02, m11);
+  s1 = programaMulti(cpu, ram, baseTemp, s1, m20);
+
+  // s2 = m01 * m10 * m22
+  s2 = programaMulti(cpu, ram, baseTemp, m01, m10);
+  s2 = programaMulti(cpu, ram, baseTemp, s2, m22);
+
+  // s3 = m00 * m12 * m21
+  s3 = programaMulti(cpu, ram, baseTemp, m00, m12);
+  s3 = programaMulti(cpu, ram, baseTemp, s3, m21);
+
+  Instruction **trecho = (Instruction **)malloc(18 * sizeof(Instruction *));
+  // trecho para diagonal principal
+  trecho[0] = setInstruction(1, p1, -1, 4); // reg1 <- p1
+  trecho[1] = setInstruction(1, resultP, -1, 5); // ram[resultP] <- reg1 (p1)
+  trecho[2] = setInstruction(2, p2, -1, 4); // reg2 <- p2
+  trecho[3] = setInstruction(2, resultP + 2, -1, 5); // ram[resultP + 2] <- reg2;
+  trecho[4] = setInstruction(resultP, resultP + 2, resultP, 0); // ram[resultP] = ram[resultP] + ram[resultP + 2]
+  trecho[5] = setInstruction(2, p3, -1, 4);
+  trecho[6] = setInstruction(2, resultP + 3, -1, 5); // reg2 <- ram[resultP + 3]
+  trecho[7] = setInstruction(resultP, resultP + 3, resultP, 0); // p1 + p2 + p3
+
+  // trecho pra diagonal secundária
+  trecho[8] = setInstruction(1, s1, -1, 4);
+  trecho[9] = setInstruction(1, resultS, -1, 5); // ram[resultS] <- reg1 (s1)
+  trecho[10] = setInstruction(2, s2, -1, 4);
+  trecho[11] = setInstruction(2, resultS + 3, -1, 5); // ram[resultS + 3] <- reg2;
+  trecho[12] = setInstruction(resultS, resultS + 3, resultS, 0); // ram[resultS] = ram[resultS] + ram[resultS + 3]
+  trecho[13] = setInstruction(2, s3, -1, 4);
+  trecho[14] = setInstruction(2, resultS + 3, -1, 5);
+  trecho[15] = setInstruction(resultS, resultS + 3, resultS, 0);
+
+  // cálculo do determinante
+  trecho[16] = setInstruction(resultP, resultS, determinante, 1);
+  trecho[17] = setInstruction(-1, -1, -1, -1);
+
+  setPrograma(cpu, trecho, 18);
+  iniciar(cpu, ram);
+  destroiPrograma(cpu, 18);
+  trecho = destroiTrecho(trecho, 18);
+
+  int result = getDado(determinante, ram);
+  ram = zerarRAM(ram, posInicialRAM, posInicialRAM + 6);
+
+  return result;
+}

@@ -54,6 +54,7 @@ void programas(){
 		printf("18 - Multiplicação de Matrizes\n");
 		printf("19 - Distância aproximada entre dois pontos\n");
 		printf("20 - Determinate de uma matriz 2x2\n");
+		printf("21 - Determinate de uma matriz 3x3\n");
 		printf("=====================================================================");
 
 		printf("\nSelecione o código da operação a ser realizada: ");
@@ -257,6 +258,18 @@ void programas(){
 
 				int det = programaDeterminante2x2(cpu, ram, pos_inicial_temp, pos_inicial_matriz);
 				printf("O determinante da matriz 2x2 é: %d", det);
+				break;
+
+			// det3x3
+			case 21:
+				pos_inicial_matriz = 0;
+				pos_inicial_temp = TAMANHO_RAM - 15;
+
+				printf("Inserir os valores da matriz 3x3:\n");
+				ram = programaPreencheMatriz(cpu, ram, pos_inicial_temp, pos_inicial_matriz, 3, 3);
+
+				det = programaDeterminante3x3(cpu, ram, pos_inicial_temp, pos_inicial_matriz);
+				printf("O determinante da matriz 3x3 é: %d\n", det);
 				break;
 
 			default:

@@ -28,6 +28,7 @@ RAM *programaMultiplicaMatriz(CPU *cpu, RAM *ram, int posInicialRAM, int posInic
 void imprimirMatriz(CPU *cpu, RAM *ram, int posInicialRAM, int pontoDePartida, int n, int m);
 RAM *criaMatriz(int n, int m, RAM *ram);
 int programaDeterminante2x2(CPU* cpu, RAM* ram, int posInicialRAM, int posInicialMatriz);
+int programaDeterminante3x3(CPU *cpu, RAM *ram, int posInicialRAM, int posInicialMatriz);
 
 RAM *programaFibonacci(CPU *cpu, RAM *ram, int posInicial, int n);
 int programaTermoPA(CPU *cpu, RAM *ram, int posInicial, int a1, int n, int r);
