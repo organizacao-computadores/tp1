@@ -960,3 +960,27 @@ int programaDeterminante3x3(CPU* cpu, RAM *ram, int posInicialRAM, int posInicia
 
   return result;
 }
+
+int programaMatrizTransposta(CPU *cpu, RAM *ram, int posInicialRAM, int posInicialMatrizA, int posInicialMatrizT, int n, int m) {
+  // n -> n de linhas da matriz original
+  // m -> n de colunas da matriz original
+
+  int rowT = m; // n de linhas da matriz transposta é o n de colunas da original
+  int colT = n;
+
+  int baseTemp = posInicialRAM;
+
+  for (int i = 0; i < n; i++) {
+    for (int j = 0; j < m; j++) {
+      int endereco_memoria = encontrarPosicaoMatriz(cpu, ram, baseTemp, posInicialMatrizA, n, m, i, j);
+
+      int val = getDado(endereco_memoria, ram);
+
+      int endereco_escrita = encontrarPosicaoMatriz(cpu, ram, baseTemp, posInicialMatrizT, rowT, colT, j, i);
+
+      setDado(endereco_escrita, val, ram);
+    }
+  }
+
+  return posInicialMatrizT;
+}

@@ -55,6 +55,7 @@ void programas(){
 		printf("19 - Distância aproximada entre dois pontos\n");
 		printf("20 - Determinate de uma matriz 2x2\n");
 		printf("21 - Determinate de uma matriz 3x3\n");
+		printf("22 - Matriz transposta\n");
 		printf("=====================================================================");
 
 		printf("\nSelecione o código da operação a ser realizada: ");
@@ -271,8 +272,32 @@ void programas(){
 				det = programaDeterminante3x3(cpu, ram, pos_inicial_temp, pos_inicial_matriz);
 				printf("O determinante da matriz 3x3 é: %d\n", det);
 				break;
+			
+			// matriz transposta
+			case 22:
+				int pos_inicial_matrizA = 0;
+				int pos_inicial_matrizT = 15;
+				pos_inicial_temp = TAMANHO_RAM - 15;
 
-			default:
+				printf("\nInsira n e m para criar a matriz: ");
+				scanf("%d %d", &n1, &m1);
+
+				printf("A seguir insira os dados da matriz: \n");
+				ram = programaPreencheMatriz(cpu, ram, TAMANHO_RAM - 2, 0, n1, m1);
+
+				int res = programaMatrizTransposta(cpu, ram, pos_inicial_temp, pos_inicial_matrizA, pos_inicial_matrizT, n1, m1);
+
+				printf("Matriz original (%dx%d): \n", n1, m1);
+				imprimirMatriz(cpu, ram, pos_inicial_temp, pos_inicial_matrizA, n1, m1);
+
+				printf("Matriz transposta (%dx%d): \n", m1, n1);
+				imprimirMatriz(cpu, ram, pos_inicial_temp, pos_inicial_matrizT, m1, n1);
+
+				ram = zerarRAM(ram, pos_inicial_matrizA, pos_inicial_matrizA + (n1 * m1));
+				ram = zerarRAM(ram, pos_inicial_matrizT, pos_inicial_matrizT + (n1 * m1));
+				break;
+
+			default : 
 				printf("\nOperação não encontrada!\n");
 				break;
 		}
