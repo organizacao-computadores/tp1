@@ -285,13 +285,13 @@ void programas(){
 				printf("A seguir insira os dados da matriz: \n");
 				ram = programaPreencheMatriz(cpu, ram, TAMANHO_RAM - 2, 0, n1, m1);
 
-				int res = programaMatrizTransposta(cpu, ram, pos_inicial_temp, pos_inicial_matrizA, pos_inicial_matrizT, n1, m1);
+				int endereco_t = programaMatrizTransposta(cpu, ram, pos_inicial_temp, pos_inicial_matrizA, pos_inicial_matrizT, n1, m1);
 
 				printf("Matriz original (%dx%d): \n", n1, m1);
 				imprimirMatriz(cpu, ram, pos_inicial_temp, pos_inicial_matrizA, n1, m1);
 
 				printf("Matriz transposta (%dx%d): \n", m1, n1);
-				imprimirMatriz(cpu, ram, pos_inicial_temp, pos_inicial_matrizT, m1, n1);
+				imprimirMatriz(cpu, ram, pos_inicial_temp, endereco_t, m1, n1);
 
 				ram = zerarRAM(ram, pos_inicial_matrizA, pos_inicial_matrizA + (n1 * m1));
 				ram = zerarRAM(ram, pos_inicial_matrizT, pos_inicial_matrizT + (n1 * m1));
